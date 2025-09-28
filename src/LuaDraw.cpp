@@ -1,4 +1,4 @@
-#include <LuaDraw.hpp>
+#include <lua.hpp>
 
 #ifdef __3DS__
 #include <3ds.h>
@@ -27,7 +27,7 @@ void DeltaTime(u64 *oldTime, double *deltaTime)
 {
     u64 currentTime = osGetTime();
 
-    *deltaTime = (double)(currentTime - *oldTime);
+    *deltaTime = (double)((currentTime - *oldTime) / 1000.0);
     *oldTime = currentTime;
 }
 
@@ -108,6 +108,7 @@ int LuaCircle(lua_State *L)
 }
 
 #else
+#include <raylib.h>
 
 extern int targetFPS;
 
@@ -127,6 +128,7 @@ int LuaInit(lua_State *L)
 int LuaSetFPS(lua_State *L)
 {
     targetFPS = luaL_checkinteger(L, 1);
+    SetTargetFPS(targetFPS);
     return 0;
 }
 

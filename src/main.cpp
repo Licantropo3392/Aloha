@@ -1,9 +1,9 @@
-#include <LuaUtilities.hpp>
-#include <LuaDraw.hpp>
+#include "LuaUtilities.hpp"
+#include "LuaDraw.hpp"
 
 #ifdef __CONSOLE__
 #include <citro2d.h>
-#include <string.h>
+#include <string>
 #include <stdio.h>
 #include <unistd.h>
 #include <3ds.h>
@@ -11,12 +11,31 @@
 int main()
 {
     gfxInitDefault();
-    consoleInit(GFX_BOTTOM, NULL);
+
+    // consoleInit(GFX_BOTTOM, NULL);
 
     const u32 clrBackground = C2D_Color32(0xFF, 0xFF, 0xFF, 0xFF);
 
-    u64 oldTime = 0;
+    u64 oldTime = osGetTime();
     double deltaTime;
+
+    std::string FPSstring;
+    std::string deltaTimeString;
+    std::string CPUstring;
+    std::string GPUstring;
+    std::string CmdBufstring;
+
+    C2D_Text FPS;
+    C2D_Text deltaTimeText;
+    C2D_Text CPUText;
+    C2D_Text GPUText;
+    C2D_Text CmdBufText;
+
+    C2D_TextBuf bufFPS = C2D_TextBufNew(256);
+    C2D_TextBuf bufDeltaTime = C2D_TextBufNew(256);
+    C2D_TextBuf bufCPU = C2D_TextBufNew(256);
+    C2D_TextBuf bufGPU = C2D_TextBufNew(256);
+    C2D_TextBuf bufCmdBuf = C2D_TextBufNew(256);
 
     Result rc = romfsInit();
     if (rc)
@@ -37,10 +56,19 @@ int main()
         if (CheckLua(L, luaL_dofile(L, "romfs:/lua/main.lua")))
         {
             lua_getglobal(L, "Init");
-
             if (lua_isfunction(L, -1))
             {
                 CheckLua(L, lua_pcall(L, 0, 0, 0));
+            }
+
+            lua_getglobal(L, "window");
+            if (lua_istable(L, -1))
+            {
+                lua_pushinteger(L, 400);
+                lua_setfield(L, -2, "width");
+
+                lua_pushinteger(L, 240);
+                lua_setfield(L, -2, "height");
             }
         }
 
@@ -49,13 +77,13 @@ int main()
         C2D_Prepare();
 
         C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
-        // C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+        C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
         while (aptMainLoop())
         {
             // gspWaitForVBlank();
 
-            DeltaTime(&oldTime, &deltaTime); // Milliseconds!!
+            DeltaTime(&oldTime, &deltaTime);
 
             hidScanInput();
 
@@ -67,22 +95,61 @@ int main()
             C2D_TargetClear(top, clrBackground);
             C2D_SceneBegin(top);
 
-            if (CheckLua(L, luaL_dofile(L, "romfs:/lua/main.lua")))
+            lua_getglobal(L, "window");
+            if (lua_istable(L, -1))
             {
-                lua_getglobal(L, "Update");
-
-                if (lua_isfunction(L, -1))
-                {
-                    CheckLua(L, lua_pcall(L, 0, 0, 0));
-                }
+                lua_pushnumber(L, deltaTime);
+                lua_setfield(L, -2, "deltaTime");
             }
 
-            printf("\x1b[2;1HFPS:     %6.2f\x1b[K", 1000 / deltaTime);
-            printf("\x1b[3;1HdeltaT:  %6.2f\x1b[K", deltaTime);
+            lua_getglobal(L, "Update");
+            if (lua_isfunction(L, -1))
+            {
+                CheckLua(L, lua_pcall(L, 0, 0, 0));
+            }
 
-            printf("\x1b[5;1HCPU:     %6.2f%%\x1b[K", C3D_GetProcessingTime() * 6);
-            printf("\x1b[6;1HGPU:     %6.2f%%\x1b[K", C3D_GetDrawingTime() * 6);
-            printf("\x1b[7;1HCmdBuf:  %6.2f%%\x1b[K", C3D_GetCmdBufUsage() * 100);
+            C2D_TargetClear(bottom, clrBackground);
+            C2D_SceneBegin(bottom);
+
+            C2D_TextBufClear(bufFPS);
+            C2D_TextBufClear(bufDeltaTime);
+            C2D_TextBufClear(bufCPU);
+            C2D_TextBufClear(bufGPU);
+            C2D_TextBufClear(bufCmdBuf);
+
+            FPSstring = "FPS: " + std::to_string((int)(1 / deltaTime));
+            deltaTimeString = "DELTA: " + std::to_string(deltaTime);
+            CPUstring = "CPU: " + std::to_string((C3D_GetProcessingTime() * 6));
+            GPUstring = "GPU: " + std::to_string((C3D_GetDrawingTime() * 6));
+            CmdBufstring = "CmdBuf: " + std::to_string((C3D_GetCmdBufUsage() * 100));
+
+            C2D_TextParse(&FPS, bufFPS, FPSstring.c_str());
+            C2D_TextOptimize(&FPS);
+
+            C2D_TextParse(&deltaTimeText, bufDeltaTime, deltaTimeString.c_str());
+            C2D_TextOptimize(&deltaTimeText);
+
+            C2D_TextParse(&CPUText, bufCPU, CPUstring.c_str());
+            C2D_TextOptimize(&CPUText);
+
+            C2D_TextParse(&GPUText, bufGPU, GPUstring.c_str());
+            C2D_TextOptimize(&GPUText);
+
+            C2D_TextParse(&CmdBufText, bufCmdBuf, CmdBufstring.c_str());
+            C2D_TextOptimize(&CmdBufText);
+
+            C2D_DrawText(&FPS, C2D_AlignLeft, 10, 10, 0, 1, 1);
+            C2D_DrawText(&deltaTimeText, C2D_AlignLeft, 10, 30, 0, 1, 1);
+            C2D_DrawText(&CPUText, C2D_AlignLeft, 10, 50, 0, 1, 1);
+            C2D_DrawText(&GPUText, C2D_AlignLeft, 10, 70, 0, 1, 1);
+            C2D_DrawText(&CmdBufText, C2D_AlignLeft, 10, 90, 0, 1, 1);
+
+            // printf("\x1b[2;1HFPS:     %6.2f\x1b[K", 1000 / deltaTime);
+            // printf("\x1b[3;1HdeltaT:  %6.2f\x1b[K", deltaTime);
+
+            // printf("\x1b[5;1HCPU:     %6.2f%%\x1b[K", C3D_GetProcessingTime() * 6);
+            // printf("\x1b[6;1HGPU:     %6.2f%%\x1b[K", C3D_GetDrawingTime() * 6);
+            // printf("\x1b[7;1HCmdBuf:  %6.2f%%\x1b[K", C3D_GetCmdBufUsage() * 100);
 
             C3D_FrameEnd(0);
         }
@@ -93,8 +160,9 @@ int main()
     return 0;
 }
 #else
+#include <raylib.h>
 
-int targetFPS = 60;
+int targetFPS;
 
 int main()
 {
@@ -111,13 +179,13 @@ int main()
 
     SetTraceLogLevel(LOG_ERROR);
 
-    double oldTime;
+    double oldTime = GetTime();
     double deltaTime;
 
+    CheckLua(L, luaL_dofile(L, "../romfs/lua/Aloha2D.lua"));
     if (CheckLua(L, luaL_dofile(L, "../romfs/lua/main.lua")))
     {
         lua_getglobal(L, "Init");
-
         if (lua_isfunction(L, -1))
         {
             CheckLua(L, lua_pcall(L, 0, 0, 0));
@@ -126,30 +194,22 @@ int main()
 
     while (!WindowShouldClose())
     {
-
         DeltaTime(&oldTime, &deltaTime);
-
-        if (targetFPS > 0) // We want a fixed frame rate
-        {
-            deltaTime = (1.0 / (double)targetFPS) - deltaTime;
-            if (deltaTime > 0.0)
-            {
-                WaitTime(deltaTime);
-                DeltaTime(&oldTime, &deltaTime);
-            }
-        }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        if (CheckLua(L, luaL_dofile(L, "../romfs/lua/main.lua")))
+        lua_getglobal(L, "window");
+        if (lua_istable(L, -1))
         {
-            lua_getglobal(L, "Update");
+            lua_pushnumber(L, deltaTime);
+            lua_setfield(L, -2, "deltaTime");
+        }
 
-            if (lua_isfunction(L, -1))
-            {
-                CheckLua(L, lua_pcall(L, 0, 0, 0));
-            }
+        lua_getglobal(L, "Update");
+        if (lua_isfunction(L, -1))
+        {
+            CheckLua(L, lua_pcall(L, 0, 0, 0));
         }
 
         DrawText(TextFormat("TARGET FPS: %i", targetFPS), 10, 10, 20, LIME);
