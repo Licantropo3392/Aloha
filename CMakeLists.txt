@@ -66,9 +66,7 @@ else ()
 endif()
 
 if(NINTENDO_3DS)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        __CONSOLE__="3DS" __OS__="Horizon"
-    )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE __3DS__)
 
     # Generate a SMDH file for the executable
     ctr_generate_smdh(${PROJECT_NAME}.smdh
