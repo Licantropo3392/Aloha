@@ -182,7 +182,7 @@ int main()
     double oldTime = GetTime();
     double deltaTime;
 
-    CheckLua(L, luaL_dofile(L, "../romfs/lua/Aloha2D.lua"));
+    // CheckLua(L, luaL_dofile(L, "../romfs/lua/Aloha2D.lua"));
     if (CheckLua(L, luaL_dofile(L, "../romfs/lua/main.lua")))
     {
         lua_getglobal(L, "Init");
@@ -213,7 +213,7 @@ int main()
         }
 
         DrawText(TextFormat("TARGET FPS: %i", targetFPS), 10, 10, 20, LIME);
-        DrawText(TextFormat("CURRENT FPS: %i", (int)(1.0 / deltaTime)), 10, 40, 20, GREEN);
+        DrawText(TextFormat("RAW FPS: %i", (int)(1.0 / deltaTime)), 10, 40, 20, GREEN);
         DrawText(TextFormat("DELTA: %f", deltaTime), 10, 70, 20, DARKGREEN);
 
         EndDrawing();

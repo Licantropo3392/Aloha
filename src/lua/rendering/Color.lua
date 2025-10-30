@@ -1,6 +1,6 @@
-Aloha2D = {}
+local Clamp = require("Utils").Clamp
 
-Color = {r = 255, g = 255, b = 255, a = 255}
+local Color = {r = 255, g = 255, b = 255, a = 255}
 Color.__index = Color
 
 function Color:New(r, g, b, a)
@@ -17,4 +17,4 @@ function Color:White()
     return Color:New(255, 255, 255, 255)
 end
 
-return Aloha2D
+return Color
