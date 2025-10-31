@@ -10,7 +10,6 @@
 #else
 #include <raylib.h>
 #endif
-#include <iostream>
 
 int targetFPS;
 
@@ -158,13 +157,15 @@ int main() {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
         C2D_TargetClear(top, clrBackground);
         C2D_SceneBegin(top);
+        
+        DeltaTime(&oldTime, &deltaTime);
     #else
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
+        deltaTime = GetFrameTime();
     #endif
-        DeltaTime(&oldTime, &deltaTime);
-        
         lua_getglobal(L, "window");
         if (lua_istable(L, -1)) {
             lua_pushnumber(L, deltaTime);
@@ -223,7 +224,7 @@ int main() {
     }
         #else
         DrawText(TextFormat("TARGET FPS: %i", targetFPS), 10, 10, 20, LIME);
-        DrawText(TextFormat("RAW FPS: %i", (int)(1.0 / deltaTime)), 10, 40, 20, GREEN);
+        DrawText(TextFormat("FPS: %i", GetFPS()), 10, 40, 20, GREEN);
         DrawText(TextFormat("DELTA: %f", deltaTime), 10, 70, 20, DARKGREEN);
 
         EndDrawing();

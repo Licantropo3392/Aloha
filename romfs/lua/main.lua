@@ -1,10 +1,8 @@
 function Init()
-    print(Aloha.__3DS__)
-
     if Aloha.__3DS__ then
         window = Aloha.Window:New(400, 240, 60, "Aloha 3DS")
     else
-        window = Aloha.Window:New(800, 480, 60, "Aloha PC")
+        window = Aloha.Window:New(800, 480, 180, "Aloha PC")
     end
 
     rect = Aloha.Rectangle:New(1, 1, 1, 1, Aloha.Color:New(0, 121, 241))
@@ -15,14 +13,14 @@ end
 
 function Update()
     if grow and rect.width < window.width and rect.height < window.height then
-        rect:SetWidth(rect.width + (window.deltaTime * 100))
-        rect:SetHeight(rect.height + (window.deltaTime * 100))
-        circle:SetRadius(circle.radius - (window.deltaTime * 50))
+        rect:SetWidth(rect.width + (window.deltaTime * window.height) / 2.5)
+        rect:SetHeight(rect.height + (window.deltaTime * window.height) / 2.5)
+        circle:SetRadius(circle.radius - (window.deltaTime * window.height) / 5)
     elseif rect.width > 1 and rect.height > 1 then
         grow = false
-        rect:SetWidth(rect.width - (window.deltaTime * 100))
-        rect:SetHeight(rect.height - (window.deltaTime * 100))
-        circle:SetRadius(circle.radius + (window.deltaTime * 50))
+        rect:SetWidth(rect.width - (window.deltaTime * window.height) / 2.5)
+        rect:SetHeight(rect.height - (window.deltaTime * window.height) / 2.5)
+        circle:SetRadius(circle.radius + (window.deltaTime * window.height) / 5)
     else
         grow = true
     end
