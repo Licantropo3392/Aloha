@@ -137,14 +137,6 @@ int LuaClose(lua_State *L)
     return 0;
 }
 
-void DeltaTime(double *oldTime, double *deltaTime)
-{
-    double currentTime = GetTime();
-
-    *deltaTime = currentTime - *oldTime;
-    *oldTime = currentTime;
-}
-
 int LuaRectangle(lua_State *L)
 {
     float x = luaL_checknumber(L, 1);
