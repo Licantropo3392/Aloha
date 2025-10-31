@@ -1,18 +1,10 @@
-local Aloha = {}
+Aloha = {}
 
-local Window = require("rendering.Window")
+Aloha.__3DS__ = false
 Aloha.Window = Window
-
-local Utils = require("Utils")
 Aloha.Utils = Utils
-
-local Color = require("rendering.Color")
 Aloha.Color = Color
-
-local Rectangle = require("rendering.Rectangle")
 Aloha.Rectangle = Rectangle
-
-local Circle = require("rendering.Circle")
 Aloha.Circle = Circle
 
 -- Object = {x = 0, y = 0}
@@ -31,5 +23,3 @@ Aloha.Circle = Circle
 
 --     return self
 -- end
-
-return Aloha

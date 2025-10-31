@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13) # Catnip richiede >= 3.13
 
-project(Aloha2D LANGUAGES C CXX)
+project(Aloha LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

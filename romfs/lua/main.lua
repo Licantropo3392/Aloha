@@ -1,10 +1,11 @@
-package.path = package.path .. ";../src/lua/?.lua;../src/lua/rendering/?.lua"
-
-local Aloha = require('Aloha')
--- package.loaded["Aloha"] = nil
-
 function Init()
-    window = Aloha.Window:New(800, 480, 60, "TESTING")
+    print(Aloha.__3DS__)
+
+    if Aloha.__3DS__ then
+        window = Aloha.Window:New(400, 240, 60, "Aloha 3DS")
+    else
+        window = Aloha.Window:New(800, 480, 60, "Aloha PC")
+    end
 
     rect = Aloha.Rectangle:New(1, 1, 1, 1, Aloha.Color:New(0, 121, 241))
     circle = Aloha.Circle:New(window.width / 2, window.height / 2, window.height / 2, Aloha.Color:New(255, 161, 0))

@@ -1,6 +1,6 @@
-local Color = require("rendering.Color")
+-- local Color = require("rendering.Color")
 
-local Rectangle = {x = 0, y = 0, width = 1, height = 1, color = Color:White()}
+Rectangle = {x = 0, y = 0, width = 1, height = 1, color = Color:White()}
 
 function Rectangle:New(x, y, width, height, color)
     local o = {
@@ -34,5 +34,3 @@ end
 function Rectangle:Draw()
     DrawRectangle(self.x, self.y, self.width, self.height, self.color)
 end
-
-return Rectangle

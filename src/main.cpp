@@ -10,11 +10,11 @@
 #else
 #include <raylib.h>
 #endif
+#include <iostream>
 
 int targetFPS;
 
-int main()
-{
+int main() {
     #ifdef __3DS__
     gfxInitDefault();
 
@@ -65,26 +65,77 @@ int main()
     lua_register(L, "DrawRectangle", LuaRectangle);
     lua_register(L, "DrawCircle", LuaCircle);
 
-    // CheckLua(L, luaL_dofile(L, "../romfs/lua/Aloha2D.lua"));
-    if (CheckLua(L, luaL_dofile(L, "../romfs/lua/main.lua")))
-    {
-        lua_getglobal(L, "Init");
-        if (lua_isfunction(L, -1))
-        {
-            CheckLua(L, lua_pcall(L, 0, 0, 0));
-        }
-
+    
+    // Load core utils and rendering modules first so their globals exist
+    CheckLua(L, luaL_dofile(L, 
         #ifdef __3DS__
-        lua_getglobal(L, "window");
-        if (lua_istable(L, -1))
-        {
-            lua_pushinteger(L, 400);
-            lua_setfield(L, -2, "width");
+        "romfs:/lua/Aloha/Utils.lua"
+        #else
+        "../romfs/lua/Aloha/Utils.lua"
+        #endif
+    ));
 
-            lua_pushinteger(L, 240);
-            lua_setfield(L, -2, "height");
+    CheckLua(L, luaL_dofile(L, 
+        #ifdef __3DS__
+        "romfs:/lua/Aloha/rendering/Color.lua"
+        #else
+        "../romfs/lua/Aloha/rendering/Color.lua"
+        #endif
+    ));
+    CheckLua(L, luaL_dofile(L, 
+        #ifdef __3DS__
+        "romfs:/lua/Aloha/rendering/Window.lua"
+        #else
+        "../romfs/lua/Aloha/rendering/Window.lua"
+        #endif
+    ));
+    CheckLua(L, luaL_dofile(L, 
+        #ifdef __3DS__
+        "romfs:/lua/Aloha/rendering/Rectangle.lua"
+        #else
+        "../romfs/lua/Aloha/rendering/Rectangle.lua"
+        #endif
+    ));
+    CheckLua(L, luaL_dofile(L, 
+        #ifdef __3DS__
+        "romfs:/lua/Aloha/rendering/Circle.lua"
+        #else
+        "../romfs/lua/Aloha/rendering/Circle.lua"
+        #endif
+    ));
+
+    // Finally load Aloha which wires module globals into the Aloha table
+    CheckLua(L, luaL_dofile(L, 
+        #ifdef __3DS__
+        "romfs:/lua/Aloha/Aloha.lua"
+        #else
+        "../romfs/lua/Aloha/Aloha.lua"
+        #endif
+    ));
+
+    if (CheckLua(L, luaL_dofile(L, 
+        #ifdef __3DS__
+        "romfs:/lua/main.lua"
+        #else
+        "../romfs/lua/main.lua"
+        #endif
+    )))
+    {
+        #ifdef __3DS__
+        lua_getglobal(L, "Aloha");
+        if (lua_istable(L, -1)) {
+            lua_getfield(L, -1, "__3DS__");
+            if (lua_isboolean(L, -1)) {
+                lua_pushboolean(L, true);
+                lua_setfield(L, -3, "__3DS__");
+            }
         }
         #endif
+
+        lua_getglobal(L, "Init");
+        if (lua_isfunction(L, -1)) {
+            CheckLua(L, lua_pcall(L, 0, 0, 0));
+        }
     }
 
     #ifdef __3DS__
@@ -95,8 +146,7 @@ int main()
     C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
-    while (aptMainLoop())
-    {
+    while (aptMainLoop()) {
         // gspWaitForVBlank();
 
         hidScanInput();
@@ -109,28 +159,23 @@ int main()
         C2D_TargetClear(top, clrBackground);
         C2D_SceneBegin(top);
     #else
-    while (!WindowShouldClose())
-    {
+    while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
     #endif
         DeltaTime(&oldTime, &deltaTime);
         
         lua_getglobal(L, "window");
-        if (lua_istable(L, -1))
-        {
+        if (lua_istable(L, -1)) {
             lua_pushnumber(L, deltaTime);
             lua_setfield(L, -2, "deltaTime");
         }
 
         lua_getglobal(L, "Update");
-        if (lua_isfunction(L, -1))
-        {
+        if (lua_isfunction(L, -1)) {
             CheckLua(L, lua_pcall(L, 0, 0, 0));
         }
         #ifdef __3DS__
-        C2D_DrawRectangle(1, 1, 0, 20, 20, 255, 0, 0, 255);
-
         C2D_TargetClear(bottom, clrBackground);
         C2D_SceneBegin(bottom);
 
@@ -185,14 +230,10 @@ int main()
     }
         #endif
 
-    if (CheckLua(L, luaL_dofile(L, "../romfs/lua/main.lua")))
-    {
-        lua_getglobal(L, "Unload");
+    lua_getglobal(L, "Unload");
 
-        if (lua_isfunction(L, -1))
-        {
-            CheckLua(L, lua_pcall(L, 0, 0, 0));
-        }
+    if (lua_isfunction(L, -1)) {
+        CheckLua(L, lua_pcall(L, 0, 0, 0));
     }
 
     lua_close(L);

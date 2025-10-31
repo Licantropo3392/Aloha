@@ -1,4 +1,4 @@
-local Window = {width = 800, height = 480, fps = 60, name = "Aloha", deltaTime = 0}
+Window = {width = 800, height = 480, fps = 60, name = "Aloha", deltaTime = 0}
 
 function Window:New(width, height, fps, name)
     local o = {
@@ -15,5 +15,3 @@ function Window:New(width, height, fps, name)
 
     return o
 end
-
-return Window

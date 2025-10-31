@@ -1,6 +1,6 @@
-local Color = require("rendering.Color")
+-- local Color = require("rendering.Color")
 
-local Circle = {x = 0, y = 0, radius = 1, color = Color:White()}
+Circle = {x = 0, y = 0, radius = 1, color = Color:White()}
 
 function Circle:New(x, y, radius, color)
     local o = {
@@ -29,5 +29,3 @@ end
 function Circle:Draw()
     DrawCircle(self.x, self.y, self.radius, self.color)
 end
-
-return Circle

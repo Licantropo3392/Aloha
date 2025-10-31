@@ -120,7 +120,6 @@ int LuaInit(lua_State *L)
 
     // SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, title);
-    // SetTargetFPS(60);
 
     return 0;
 }
