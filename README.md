@@ -1,7 +1,7 @@
 # 🏖️ Aloha Framework
 
 **Aloha** is a lightweight, extensible framework for building cross-platform applications and games using **Lua scripting** as the primary development language.  
-It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Nintendo 3DS** (via [Citro2D](https://github.com/)), with additional platforms planned for the future.
+It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Nintendo 3DS** (via [Citro2D](https://github.com/devkitPro/citro2d)), with additional platforms planned for the future.
 
 ---
 
@@ -30,7 +30,7 @@ It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Ninten
 ### PC Build
 
 ```bash
-git clone https://github.com/yourname/aloha.git
+git clone https://github.com/Licantropo3392/Aloha.git
 cd aloha
 cmake -B build -S .
 cmake --build build
@@ -39,12 +39,12 @@ cmake --build build
 
 ### Nintendo 3DS (Catnip) Build
 
-Ensure you have the devkitPro environment(link...) set up with Catnip installed.
+Ensure you have the [devkitPro environment](https://devkitpro.org/wiki/Getting_Started) set up with Catnip installed.
 
 Make sure your Lua files are located inside the romfs directory — they will be automatically bundled into a single file.
 
 ```bash
-git clone https://github.com/yourname/aloha.git
+git clone https://github.com/Licantropo3392/Aloha.git
 cd aloha
 catnip -T 3ds -B 3ds
 ```
@@ -74,12 +74,6 @@ On your PC, run:
 ```
 
 This will copy the file to your SD card and launch it automatically.
-
----
-
-## 🧠 Lua Example
-
-Perfetto 👍 — ecco una **versione riassunta e ben formattata** del tuo esempio, con brevi spiegazioni tra i blocchi (non istruzione per istruzione, solo il contesto), perfetta da inserire nel README:
 
 ---
 
