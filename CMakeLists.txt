@@ -94,7 +94,7 @@ else()
         message(STATUS "Raylib not found. Please install the development package.")
 
         target_include_directories(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/lib/raylib/include)
-        target_link_libraries(${PROJECT_NAME}
+        target_link_libraries(${PROJECT_NAME} PUBLIC
             ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylib.a
             PkgConfig::LUA
         )
