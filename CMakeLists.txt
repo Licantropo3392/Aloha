@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13) # Catnip richiede >= 3.13
+cmake_minimum_required(VERSION 3.13) # Catnip reuires >= 3.13
 
 project(Aloha LANGUAGES C CXX)
 
@@ -11,7 +11,7 @@ add_executable(${PROJECT_NAME}
     ${CMAKE_SOURCE_DIR}/src/LuaDraw.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/include)
 
 find_package(PkgConfig REQUIRED)
 
@@ -24,7 +24,7 @@ if (LUA_FOUND)
     message(STATUS "LUA_INCLUDE_DIRS: ${LUA_INCLUDE_DIRS}")
     message(STATUS "LUA_LIBRARIES: ${LUA_LIBRARIES}")
 
-    target_link_libraries(${PROJECT_NAME} PRIVATE PkgConfig::LUA)
+    target_link_libraries(${PROJECT_NAME} PUBLIC PkgConfig::LUA)
 else ()
     message(STATUS "Lua 5.1 not found. Compiling Lua from source as a static library.")
 
@@ -61,12 +61,12 @@ else ()
         ${CMAKE_SOURCE_DIR}/lib/lua/lzio.c
     )
 
-    target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib/lua/include)
-    target_link_libraries(${PROJECT_NAME} PRIVATE LUA)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/lua/include)
+    target_link_libraries(${PROJECT_NAME} PUBLIC LUA)
 endif()
 
 if(NINTENDO_3DS)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE __3DS__)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC __3DS__)
 
     # Generate a SMDH file for the executable
     ctr_generate_smdh(${PROJECT_NAME}.smdh
@@ -84,13 +84,19 @@ if(NINTENDO_3DS)
 
     # target_include_directories(${PROJECT_NAME} PRIVATE ${DEVKITPRO}/libctru/include)
     # target_link_directories(${PROJECT_NAME} PRIVATE ${DEVKITPRO}/libctru/lib)
-    target_link_libraries(${PROJECT_NAME} PRIVATE citro2d citro3d)
+    target_link_libraries(${PROJECT_NAME} PUBLIC citro2d citro3d)
 else()
     pkg_check_modules(RAYLIB QUIET IMPORTED_TARGET raylib)
 
-    if(NOT RAYLIB_FOUND)
-        message(FATAL_ERROR "Raylib not found. Please install the development package.")
-    endif()
+    if(RAYLIB_FOUND)
+        target_link_libraries(${PROJECT_NAME} PUBLIC PkgConfig::RAYLIB)
+    else()
+        message(STATUS "Raylib not found. Please install the development package.")
 
-    target_link_libraries(${PROJECT_NAME} PRIVATE PkgConfig::RAYLIB)
+        target_include_directories(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/lib/raylib/include)
+        target_link_libraries(${PROJECT_NAME}
+            ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylib.a
+            PkgConfig::LUA
+        )
+    endif()
 endif()
