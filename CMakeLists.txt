@@ -13,15 +13,16 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/include)
 
-if (UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
+    message(STATUS "UNIX")
     find_package(PkgConfig REQUIRED)
 
     pkg_check_modules(LUA QUIET IMPORTED_TARGET lua5.1)
-    if (NOT LUA_FOUND) # Fedora breaks compatibility
+    if(NOT LUA_FOUND) # Fedora breaks compatibility
         pkg_check_modules(LUA QUIET IMPORTED_TARGET lua-5.1)
     endif()
 
-    if (LUA_FOUND)
+    if(LUA_FOUND)
         message(STATUS "LUA_INCLUDE_DIRS: ${LUA_INCLUDE_DIRS}")
         message(STATUS "LUA_LIBRARIES: ${LUA_LIBRARIES}")
 
@@ -64,43 +65,48 @@ if (UNIX AND NOT APPLE)
 
         target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/lua/include)
         target_link_libraries(${PROJECT_NAME} PUBLIC LUA)
-    endif()
 
+        message(STATUS "LUA_INCLUDE: ${CMAKE_SOURCE_DIR}/lib/lua/include")
+    endif()
+else()
+    message(STATUS "Non-UNIX system detected. Compiling Lua from source as a static library.")
     add_library(LUA STATIC
-            ${CMAKE_SOURCE_DIR}/lib/lua/lapi.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lauxlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lbaselib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lcode.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldebug.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldblib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldo.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldump.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lfunc.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lgc.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/linit.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/liolib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/llex.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lmathlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lmem.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/loadlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lobject.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lopcodes.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/loslib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lparser.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lstate.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lstring.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lstrlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ltable.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ltablib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ltm.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lua.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lundump.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lvm.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lzio.c
-        )
+        ${CMAKE_SOURCE_DIR}/lib/lua/lapi.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lauxlib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lbaselib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lcode.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ldebug.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ldblib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ldo.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ldump.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lfunc.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lgc.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/linit.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/liolib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/llex.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lmathlib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lmem.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/loadlib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lobject.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lopcodes.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/loslib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lparser.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lstate.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lstring.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lstrlib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ltable.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ltablib.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/ltm.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lua.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lundump.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lvm.c
+        ${CMAKE_SOURCE_DIR}/lib/lua/lzio.c
+    )
 
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/lua/include)
     target_link_libraries(${PROJECT_NAME} PUBLIC LUA)
+
+    message(STATUS "LUA_INCLUDE: ${CMAKE_SOURCE_DIR}/lib/lua/include")
 endif()
 
 if(NINTENDO_3DS)
@@ -124,7 +130,7 @@ if(NINTENDO_3DS)
     # target_link_directories(${PROJECT_NAME} PRIVATE ${DEVKITPRO}/libctru/lib)
     target_link_libraries(${PROJECT_NAME} PUBLIC citro2d citro3d)
 else()
-    if (UNIX AND NOT APPLE)
+    if(UNIX AND NOT APPLE)
         pkg_check_modules(RAYLIB QUIET IMPORTED_TARGET raylib)
 
         if(RAYLIB_FOUND)
@@ -136,7 +142,13 @@ else()
             target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylib.a)
         endif()
     else()
+        message(STATUS "Non-UNIX system detected. Using bundled Raylib.")
+
         target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/include)
-        target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylib.a)
+        target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/raylib.dll)         
+    endif()
+
+    if(WIN32)
+        set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
     endif()
 endif()
