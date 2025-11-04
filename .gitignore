@@ -3,3 +3,5 @@
 /example
 /3ds
 /lib/raylib
+/romfs/lua/main.lua
+/romfs/lua/example.lua
