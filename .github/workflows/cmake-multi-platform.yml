@@ -5,7 +5,11 @@ name: CMake on multiple platforms
 on:
   push:
     branches: [ "main" ]
-    tags: [ '*' ]
+    tags: 
+      - 'v*.*.*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -94,10 +98,7 @@ jobs:
         name: "Release ${{ github.ref_name }}"
         body: "Automatic build of ${{ github.ref_name }}"
         files: ${{ github.workspace }}/Aloha-Linux_x64.tar.gz
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
 
     # - name: Test
     #   working-directory: ${{ steps.strings.outputs.build-output-dir }}
