@@ -88,7 +88,7 @@ jobs:
 
     - name: Compress executable
       if: runner.os == 'Linux'
-      run: tar -czf Aloha-Linux_x64.tar.gz ${{ github.workspace }}/build/Aloha ${{ github.workspace }}/romfs
+      run: tar -czf Aloha-Linux_x64-${{ matrix.c_compiler }}.tar.gz ./build/Aloha ./romfs
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
@@ -96,7 +96,7 @@ jobs:
         tag_name: ${{ github.ref_name }}
         name: "Release ${{ github.ref_name }}"
         body: "Automatic build of ${{ github.ref_name }}"
-        files: Aloha-Linux_x64.tar.gz
+        files: Aloha-Linux_x64-${{ matrix.c_compiler }}.tar.gz
         prerelease: false
 
     # - name: Test
