@@ -88,7 +88,7 @@ jobs:
 
     - name: Compress executable
       if: runner.os == 'Linux'
-      run: tar -czf Aloha-Linux_x64-${{ matrix.c_compiler }}.tar.gz ./build/Aloha ./romfs
+      run: cd build && tar -czf Aloha-Linux_x64-${{ matrix.c_compiler }}.tar.gz ./Aloha ../romfs
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
