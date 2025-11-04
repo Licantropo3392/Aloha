@@ -97,7 +97,7 @@ jobs:
         name: "Release ${{ github.ref_name }}"
         body: "Automatic build of ${{ github.ref_name }}"
         files: ${{ github.workspace }}/Aloha-Linux_x64.tar.gz
-        prerelease: true
+        prerelease: false
 
     # - name: Test
     #   working-directory: ${{ steps.strings.outputs.build-output-dir }}
