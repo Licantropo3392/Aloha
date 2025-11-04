@@ -5,3 +5,4 @@
 /lib/raylib
 /romfs/lua/main.lua
 /romfs/lua/example.lua
+/lib/lua/makefile
