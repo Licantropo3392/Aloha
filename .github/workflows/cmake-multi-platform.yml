@@ -96,7 +96,7 @@ jobs:
         tag_name: ${{ github.ref_name }}
         name: "Release ${{ github.ref_name }}"
         body: "Automatic build of ${{ github.ref_name }}"
-        files: ${{ github.workspace }}/Aloha-Linux_x64.tar.gz
+        files: Aloha-Linux_x64.tar.gz
         prerelease: false
 
     # - name: Test
