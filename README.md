@@ -1,4 +1,4 @@
-# 🏖️ Aloha Framework
+# 🏖️ Aloha
 
 **Aloha** is a lightweight, extensible framework for building cross-platform applications and games using **Lua scripting** as the primary development language.  
 It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Nintendo 3DS** (via [Citro2D](https://github.com/devkitPro/citro2d)), with additional platforms planned for the future.
