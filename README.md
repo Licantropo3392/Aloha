@@ -12,7 +12,7 @@ It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Ninten
   - **Citro2D** on Nintendo 3DS
 - 🎮 Simple drawing API (rectangles, circles, colors, windows, etc.)
 - ⚙️ Built with **CMake** for easy configuration and portability.
-- 🧩 Includes a **demo Lua project** (`main.lua`) to showcase basic functionality.
+- 🧩 Includes a **demo Lua project** (`example.lua`) to showcase basic functionality.
 - 📦 Modular Lua architecture (`Aloha` namespace).
 
 
