@@ -86,9 +86,13 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-    - name: Compress executable
+    - name: Prepapare release files
       if: runner.os == 'Linux'
-      run: cd build && tar -czf Aloha-Linux_x64-${{ matrix.c_compiler }}.tar.gz ./Aloha ../romfs
+      run: mkdir release && mv ./build/Aloha ./release && mv ./romfs ./release && ls -R ./release
+
+    - name: Compress release files
+      if: runner.os == 'Linux'
+      run: tar -czf Aloha-Linux_x64-${{ matrix.c_compiler }}.tar.gz ./release
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
