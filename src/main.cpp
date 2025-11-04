@@ -70,7 +70,7 @@ int main() {
         #ifdef __3DS__
         "romfs:/lua/Aloha/Utils.lua"
         #else
-        "../romfs/lua/Aloha/Utils.lua"
+        "./romfs/lua/Aloha/Utils.lua"
         #endif
     ));
 
@@ -78,28 +78,28 @@ int main() {
         #ifdef __3DS__
         "romfs:/lua/Aloha/rendering/Color.lua"
         #else
-        "../romfs/lua/Aloha/rendering/Color.lua"
+        "./romfs/lua/Aloha/rendering/Color.lua"
         #endif
     ));
     CheckLua(L, luaL_dofile(L, 
         #ifdef __3DS__
         "romfs:/lua/Aloha/rendering/Window.lua"
         #else
-        "../romfs/lua/Aloha/rendering/Window.lua"
+        "./romfs/lua/Aloha/rendering/Window.lua"
         #endif
     ));
     CheckLua(L, luaL_dofile(L, 
         #ifdef __3DS__
         "romfs:/lua/Aloha/rendering/Rectangle.lua"
         #else
-        "../romfs/lua/Aloha/rendering/Rectangle.lua"
+        "./romfs/lua/Aloha/rendering/Rectangle.lua"
         #endif
     ));
     CheckLua(L, luaL_dofile(L, 
         #ifdef __3DS__
         "romfs:/lua/Aloha/rendering/Circle.lua"
         #else
-        "../romfs/lua/Aloha/rendering/Circle.lua"
+        "./romfs/lua/Aloha/rendering/Circle.lua"
         #endif
     ));
 
@@ -108,7 +108,7 @@ int main() {
         #ifdef __3DS__
         "romfs:/lua/Aloha/Aloha.lua"
         #else
-        "../romfs/lua/Aloha/Aloha.lua"
+        "./romfs/lua/Aloha/Aloha.lua"
         #endif
     ));
 
@@ -116,7 +116,7 @@ int main() {
         #ifdef __3DS__
         "romfs:/lua/main.lua"
         #else
-        "../romfs/lua/main.lua"
+        "./romfs/lua/main.lua"
         #endif
     )))
     {
