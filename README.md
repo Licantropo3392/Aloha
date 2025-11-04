@@ -3,7 +3,6 @@
 **Aloha** is a lightweight, extensible framework for building cross-platform applications and games using **Lua scripting** as the primary development language.  
 It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Nintendo 3DS** (via [Citro2D](https://github.com/devkitPro/citro2d)), with additional platforms planned for the future.
 
----
 
 ## ✨ Features
 
@@ -16,7 +15,6 @@ It currently supports **PC** (via [Raylib](https://www.raylib.com)) and **Ninten
 - 🧩 Includes a **demo Lua project** (`main.lua`) to showcase basic functionality.
 - 📦 Modular Lua architecture (`Aloha` namespace).
 
----
 
 ## 🛠️ Building the Project
 
@@ -51,7 +49,6 @@ catnip -T 3ds -B 3ds
 
 This produces a .3dsx binary that can be launched through the Homebrew Launcher.
 
----
 
 ## ▶️ Running
 
@@ -75,7 +72,6 @@ On your PC, run:
 
 This will copy the file to your SD card and launch it automatically.
 
----
 
 ## 🧠 Lua Example
 
@@ -110,8 +106,6 @@ circle:Draw()
 
 You can reference a short script that demonstrates **Aloha’s real-time rendering**, **delta-time logic**, and **cross-platform Lua control** — all in under 50 lines of code — inside romfs/example.lua.
 
----
-
 ## 📁 Project Structure
 
 ```
@@ -121,7 +115,6 @@ romfs/lua/main.lua      → Demo script
 CMakeLists.txt          → Build configuration
 ```
 
----
 
 ## 🔮 Future Plans
 
@@ -131,14 +124,12 @@ CMakeLists.txt          → Build configuration
 * Lua-based UI framework
 * Network and file utilities
 
----
 
 ## 📜 License
 
 Released under the **MIT License**.
 You’re free to use, modify, and distribute Aloha in your own projects.
 
----
 
 ## ❤️ Credits
 
