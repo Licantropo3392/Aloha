@@ -66,14 +66,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set reusable strings
-        shell: msys2 {0}
-        run: |
-          WORKSPACE=$(cygpath -u "${{ github.workspace }}")
-          echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
-          echo "BUILD_OUTPUT_DIR=$WORKSPACE/build" >> $GITHUB_ENV
-
-
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
@@ -88,6 +80,13 @@ jobs:
             toolchain:p
             cmake:p
             ninja:p
+
+      - name: Set reusable strings
+        shell: msys2 {0}
+        run: |
+          WORKSPACE=$(cygpath -u "${{ github.workspace }}")
+          echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
+          echo "BUILD_OUTPUT_DIR=$WORKSPACE/build" >> $GITHUB_ENV
 
       - name: Prepare Raylib (Windows)
         shell: msys2 {0}
