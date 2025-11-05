@@ -22,31 +22,34 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set reusable strings
-        id: strings
-        run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        run: |
+          WORKSPACE=${{ github.workspace }}
+          echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
+          echo "BUILD_OUTPUT_DIR=$WORKSPACE/build" >> $GITHUB_ENV
+
 
       - name: Prepare Raylib (Linux)
         run: |
-          mkdir -p ${{ github.workspace }}/lib/raylib
-          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_linux_amd64.tar.gz -o ${{ github.workspace }}/raylib.tar.gz
-          tar -xzf ${{ github.workspace }}/raylib.tar.gz
-          mv ${{ github.workspace }}/raylib-5.5_linux_amd64/* ${{ github.workspace }}/lib/raylib
+          mkdir -p $WORKSPACE/lib/raylib
+          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_linux_amd64.tar.gz -o $WORKSPACE/raylib.tar.gz
+          tar -xzf $WORKSPACE/raylib.tar.gz
+          mv $WORKSPACE/raylib-5.5_linux_amd64/* $WORKSPACE/lib/raylib
 
       - name: Configure CMake
-        run: cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }}
+        run: cmake -B $BUILD_OUTPUT_DIR -S $WORKSPACE
 
       - name: Build
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
+        run: cmake --build $BUILD_OUTPUT_DIR
 
       - name: Prepare release files
         run: |
           mkdir release
-          cp -r ${{ steps.strings.outputs.build-output-dir }}/Aloha* ${{ github.workspace }}/release/ || true
-          cp -r ${{ github.workspace }}/romfs ${{ github.workspace }}/release/ || true
-          ls -R ${{ github.workspace }}/release
+          cp -r $BUILD_OUTPUT_DIR/Aloha* $WORKSPACE/release/ || true
+          cp -r $WORKSPACE/romfs $WORKSPACE/release/ || true
+          ls -R $WORKSPACE/release
 
       - name: Compress release files
-        run: tar -czf Aloha-Linux_${{ matrix.compiler }}.tar.gz ${{ github.workspace }}/release
+        run: tar -czf Aloha-Linux_${{ matrix.compiler }}.tar.gz $WORKSPACE/release
 
       - uses: actions/upload-artifact@v4
         with:
@@ -64,8 +67,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set reusable strings
-        id: strings
-        run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        shell: msys2 {0}
+        run: |
+          WORKSPACE=$(cygpath -u "${{ github.workspace }}")
+          echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
+          echo "BUILD_OUTPUT_DIR=$WORKSPACE/build" >> $GITHUB_ENV
+
 
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
@@ -85,26 +92,26 @@ jobs:
       - name: Prepare Raylib (Windows)
         shell: msys2 {0}
         run: |
-          mkdir -p ${{ github.workspace }}/lib/raylib
-          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o ${{ github.workspace }}/raylib.zip
-          unzip -q ${{ github.workspace }}/raylib.zip
-          mv ${{ github.workspace }}/raylib-5.5_win32_mingw-w64/* ${{ github.workspace }}/lib/raylib
+          mkdir -p $WORKSPACE/lib/raylib
+          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o $WORKSPACE/raylib.zip
+          unzip -q $WORKSPACE/raylib.zip
+          mv $WORKSPACE/raylib-5.5_win32_mingw-w64/* $WORKSPACE/lib/raylib
 
       - name: Configure CMake
         shell: msys2 {0}
-        run: cmake -B ${{ steps.strings.outputs.build-output-dir }} -G Ninja -S ${{ github.workspace }}
+        run: cmake -B $BUILD_OUTPUT_DIR -G Ninja -S $WORKSPACE
 
       - name: Build
         shell: msys2 {0}
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
+        run: cmake --build $BUILD_OUTPUT_DIR
 
       - name: Prepare release files
         shell: msys2 {0}
         run: |
           mkdir release
-          cp -r ${{ steps.strings.outputs.build-output-dir }}/Aloha* ${{ github.workspace }}/release/ || true
-          cp -r ${{ github.workspace }}/romfs ${{ github.workspace }}/release/ || true
-          zip -r Aloha-Windows.zip ${{ github.workspace }}/release
+          cp -r $BUILD_OUTPUT_DIR/Aloha* $WORKSPACE/release/ || true
+          cp -r $WORKSPACE/romfs $WORKSPACE/release/ || true
+          zip -r Aloha-Windows.zip $WORKSPACE/release
 
       - uses: actions/upload-artifact@v4
         with:
