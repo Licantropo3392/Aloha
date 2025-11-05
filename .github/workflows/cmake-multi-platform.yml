@@ -19,17 +19,12 @@ jobs:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            ext: tar.gz
-            shell: bash
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            ext: tar.gz
-            shell: bash
           - os: windows-latest
             sys: mingw64
             shell: msys2 {0}
-            ext: zip
 
     steps:
       - uses: actions/checkout@v4
@@ -49,11 +44,11 @@ jobs:
           install: >-
             git
             make
+            zip
           pacboy: >-
             toolchain:p
             cmake:p
             ninja:p
-            zip:p
 
       # --- LINUX DEPENDENCIES ---
       - name: Prepare Raylib (Linux)
