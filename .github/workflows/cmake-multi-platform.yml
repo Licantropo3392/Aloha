@@ -27,7 +27,6 @@ jobs:
           echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
           echo "BUILD_OUTPUT_DIR=$WORKSPACE/build" >> $GITHUB_ENV
 
-
       - name: Prepare Raylib (Linux)
         run: |
           mkdir -p $WORKSPACE/lib/raylib
@@ -95,6 +94,7 @@ jobs:
           curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o $WORKSPACE/raylib.zip
           unzip -q $WORKSPACE/raylib.zip
           mv $WORKSPACE/raylib-5.5_win32_mingw-w64/* $WORKSPACE/lib/raylib
+          ls -R $WORKSPACE/lib/raylib
 
       - name: Configure CMake
         shell: msys2 {0}
@@ -110,6 +110,11 @@ jobs:
           mkdir release
           cp -r $BUILD_OUTPUT_DIR/Aloha* $WORKSPACE/release/ || true
           cp -r $WORKSPACE/romfs $WORKSPACE/release/ || true
+          ls -R $WORKSPACE/release
+
+      - name: Compress release files
+        shell: msys2 {0}
+        run:
           zip -r Aloha-Windows.zip $WORKSPACE/release
 
       - uses: actions/upload-artifact@v4
