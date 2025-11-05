@@ -27,6 +27,8 @@ jobs:
         include:
           - os: windows-latest
             sys: mingw64
+            run:
+              shell: msys2 {0}
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
