@@ -84,7 +84,8 @@ jobs:
           mkdir -p lib/raylib
           curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o raylib.zip
           unzip -q raylib.zip
-          mv raylib-5.5_win32_mingw-w64/* lib/raylib
+          cp -r raylib-5.5_win32_mingw-w64* lib/raylib || true
+          ls -R lib/raylib
 
       - name: Configure CMake
         shell: msys2 {0}
