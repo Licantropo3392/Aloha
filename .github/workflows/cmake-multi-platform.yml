@@ -67,7 +67,6 @@ jobs:
       # --- WINDOWS DEPENDENCIES ---
       - name: Prepare Raylib (Windows)
         if: runner.os == 'Windows'
-        shell: ${{ matrix.shell }}
         run: |
           mkdir -p lib/raylib
           curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o raylib.zip
@@ -76,7 +75,6 @@ jobs:
 
       # --- CMAKE CONFIGURE ---
       - name: Configure CMake
-        shell: ${{ matrix.shell }}
         run: >
           cmake -B ${{ steps.strings.outputs.build-output-dir }}
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
@@ -86,12 +84,10 @@ jobs:
 
       # --- BUILD ---
       - name: Build
-        shell: ${{ matrix.shell }}
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release
 
       # --- PACKAGE ---
       - name: Prepare release files
-        shell: ${{ matrix.shell }}
         run: |
           mkdir release
           cp -r ./build/Aloha* ./release/ || true
@@ -104,7 +100,6 @@ jobs:
 
       - name: Compress release files (Windows)
         if: runner.os == 'Windows'
-        shell: ${{ matrix.shell }}
         run: zip -r Aloha-${{ runner.os }}.zip ./release
 
       # --- UPLOAD RELEASE ---
