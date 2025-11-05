@@ -72,6 +72,7 @@ jobs:
             git
             make
             zip
+            unzip
           pacboy: >-
             toolchain:p
             cmake:p
