@@ -27,26 +27,26 @@ jobs:
 
       - name: Prepare Raylib (Linux)
         run: |
-          mkdir -p lib/raylib
-          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_linux_amd64.tar.gz -o raylib.tar.gz
-          tar -xzf raylib.tar.gz
-          mv raylib-5.5_linux_amd64/* lib/raylib
+          mkdir -p ${{ github.workspace }}/lib/raylib
+          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_linux_amd64.tar.gz -o ${{ github.workspace }}/raylib.tar.gz
+          tar -xzf ${{ github.workspace }}/raylib.tar.gz
+          mv ${{ github.workspace }}/raylib-5.5_linux_amd64/* ${{ github.workspace }}/lib/raylib
 
       - name: Configure CMake
         run: cmake -B ${{ steps.strings.outputs.build-output-dir }} -S ${{ github.workspace }}
 
       - name: Build
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
 
       - name: Prepare release files
         run: |
           mkdir release
-          cp -r ./build/Aloha* ./release/ || true
-          cp -r ./romfs ./release/ || true
-          ls -R ./release
+          cp -r ${{ steps.strings.outputs.build-output-dir }}/Aloha* ${{ github.workspace }}/release/ || true
+          cp -r ${{ github.workspace }}/romfs ${{ github.workspace }}/release/ || true
+          ls -R ${{ github.workspace }}/release
 
       - name: Compress release files
-        run: tar -czf Aloha-Linux_${{ matrix.compiler }}.tar.gz ./release
+        run: tar -czf Aloha-Linux_${{ matrix.compiler }}.tar.gz ${{ github.workspace }}/release
 
       - uses: actions/upload-artifact@v4
         with:
@@ -62,6 +62,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set reusable strings
+        id: strings
+        run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
@@ -81,26 +85,26 @@ jobs:
       - name: Prepare Raylib (Windows)
         shell: msys2 {0}
         run: |
-          mkdir -p lib/raylib
-          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o raylib.zip
-          unzip -q raylib.zip
-          mv raylib-5.5_win32_mingw-w64/* lib/raylib
+          mkdir -p ${{ github.workspace }}/lib/raylib
+          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip -o ${{ github.workspace }}/raylib.zip
+          unzip -q ${{ github.workspace }}/raylib.zip
+          mv ${{ github.workspace }}/raylib-5.5_win32_mingw-w64/* ${{ github.workspace }}/lib/raylib
 
       - name: Configure CMake
         shell: msys2 {0}
-        run: cmake -B build -G Ninja -S .
+        run: cmake -B ${{ steps.strings.outputs.build-output-dir }} -G Ninja -S ${{ github.workspace }}
 
       - name: Build
         shell: msys2 {0}
-        run: cmake --build build --config Release
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
 
       - name: Prepare release files
         shell: msys2 {0}
         run: |
           mkdir release
-          cp -r ./build/Aloha* ./release/ || true
-          cp -r ./romfs ./release/ || true
-          zip -r Aloha-Windows.zip ./release
+          cp -r ${{ steps.strings.outputs.build-output-dir }}/Aloha* ${{ github.workspace }}/release/ || true
+          cp -r ${{ github.workspace }}/romfs ${{ github.workspace }}/release/ || true
+          zip -r Aloha-Windows.zip ${{ github.workspace }}/release
 
       - uses: actions/upload-artifact@v4
         with:
