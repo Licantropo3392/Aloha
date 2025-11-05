@@ -93,7 +93,7 @@ jobs:
           mkdir -p $WORKSPACE/lib/raylib
           curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip -o $WORKSPACE/raylib.zip
           unzip -q $WORKSPACE/raylib.zip
-          mv $WORKSPACE/raylib-5.5_win32_mingw-w64/* $WORKSPACE/lib/raylib
+          mv $WORKSPACE/raylib-5.5_win64_mingw-w64/* $WORKSPACE/lib/raylib
           ls -R $WORKSPACE/lib/raylib
 
       - name: Configure CMake
