@@ -111,7 +111,7 @@ You can reference a short script that demonstrates **Aloha’s real-time renderi
 ```
 src/                    → C++ core source
 romfs/lua/Aloha/        → Core Lua modules (Color, Window, Shapes, etc.)
-romfs/lua/example.lua      → Demo script
+romfs/lua/example.lua   → Demo script
 CMakeLists.txt          → Build configuration
 ```
 
