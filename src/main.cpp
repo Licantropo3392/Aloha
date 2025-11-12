@@ -64,61 +64,24 @@ int main() {
     lua_register(L, "DrawRectangle", LuaRectangle);
     lua_register(L, "DrawCircle", LuaCircle);
 
+    #ifdef __3DS__
+        #define BASE_PATH "romfs:"
+    #else
+        #define BASE_PATH "./romfs"
+    #endif
     
     // Load core utils and rendering modules first so their globals exist
-    CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/Aloha/Utils.lua"
-        #else
-        "./romfs/lua/Aloha/Utils.lua"
-        #endif
-    ));
+    CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/Aloha/Utils.lua"));
 
-    CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/Aloha/rendering/Color.lua"
-        #else
-        "./romfs/lua/Aloha/rendering/Color.lua"
-        #endif
-    ));
-    CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/Aloha/rendering/Window.lua"
-        #else
-        "./romfs/lua/Aloha/rendering/Window.lua"
-        #endif
-    ));
-    CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/Aloha/rendering/Rectangle.lua"
-        #else
-        "./romfs/lua/Aloha/rendering/Rectangle.lua"
-        #endif
-    ));
-    CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/Aloha/rendering/Circle.lua"
-        #else
-        "./romfs/lua/Aloha/rendering/Circle.lua"
-        #endif
-    ));
+    CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/Aloha/rendering/Color.lua"));
+    CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/Aloha/rendering/Window.lua"));
+    CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/Aloha/rendering/Rectangle.lua"));
+    CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/Aloha/rendering/Circle.lua"));
 
     // Finally load Aloha which wires module globals into the Aloha table
-    CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/Aloha/Aloha.lua"
-        #else
-        "./romfs/lua/Aloha/Aloha.lua"
-        #endif
-    ));
+    CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/Aloha/Aloha.lua"));
 
-    if (CheckLua(L, luaL_dofile(L, 
-        #ifdef __3DS__
-        "romfs:/lua/main.lua"
-        #else
-        "./romfs/lua/main.lua"
-        #endif
-    )))
+    if (CheckLua(L, luaL_dofile(L, BASE_PATH "/lua/main.lua")))
     {
         #ifdef __3DS__
         lua_getglobal(L, "Aloha");
