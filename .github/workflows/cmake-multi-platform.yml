@@ -117,7 +117,7 @@ jobs:
           } else {
             cp build/Aloha.exe release/
           }
-          cp lib/raylib/raylib.dll release/
+          cp lib/raylib/lib/raylib.dll release/
           cp -r romfs/ release/
 
       - name: Compress release files
