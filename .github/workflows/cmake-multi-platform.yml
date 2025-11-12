@@ -9,6 +9,8 @@ permissions:
   contents: write
 
 jobs:
+
+
   # ======================
   # LINUX BUILD
   # ======================
@@ -20,12 +22,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      # - name: Set reusable strings
-      #   run: |
-      #     WORKSPACE=${{ github.workspace }}
-      #     echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
-      #     echo "BUILD_OUTPUT_DIR=$WORKSPACE/build" >> $GITHUB_ENV
 
       - name: Prepare Raylib (Linux)
         run: |
@@ -43,8 +39,8 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir release
-          cp -r build/Aloha* release/ || true
-          cp -r romfs/ release/ || true
+          cp -r build/Aloha release/
+          cp -r romfs/ release/
 
       - name: Compress release files
         run: tar -czf Aloha-Linux_${{ matrix.compiler }}.tar.gz release/
@@ -60,57 +56,77 @@ jobs:
   # ======================
   build-windows:
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: msvc
+            raylib_url: https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_msvc16.zip
+            artifact_name: Aloha-Windows-MSVC.zip
+            setup_msys: false
+
+          - name: mingw
+            raylib_url: https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip
+            artifact_name: Aloha-Windows-mingw64.zip
+            setup_msys: true
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup MSYS2
+      - name: Setup MSYS2 (only for MinGW)
+        if: ${{ matrix.setup_msys }}
         uses: msys2/setup-msys2@v2
         with:
           msystem: mingw64
           update: true
           install: >-
             git
-            make
-            zip
-            unzip
-          pacboy: >-
-            toolchain:p
-            cmake:p
-            ninja:p
+            cmake
+            ninja
+          pacboy: toolchain:p
 
-      - name: Prepare Raylib (Windows)
-        shell: msys2 {0}
+      - name: Prepare Raylib
         run: |
           mkdir -p lib/raylib/
-          curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip -o raylib.zip
-          unzip -q raylib.zip
-          mv raylib-5.5_win64_mingw-w64/* lib/raylib/
+          curl -L ${{ matrix.raylib_url }} -o raylib.zip
+          Expand-Archive raylib.zip
+          mv raylib-*/* lib/raylib/
 
       - name: Configure CMake
-        shell: msys2 {0}
-        run: cmake -B build/ -G Ninja -S . -DCMAKE_BUILD_TYPE=Release
+        run: |
+          if ("${{ matrix.name }}" -eq "msvc") {
+            cmake -B build/ -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+          } else {
+            cmake -B build/ -S . -G Ninja -DCMAKE_BUILD_TYPE=Release
+          }
 
       - name: Build
-        shell: msys2 {0}
-        run: cmake --build build/ -j
+        run: |
+          if ("${{ matrix.name }}" -eq "msvc") {
+            cmake --build build/ --config Release --parallel
+          } else {
+            cmake --build build/ -j
+          }
 
       - name: Prepare release files
-        shell: msys2 {0}
         run: |
-          mkdir release/
-          cp -r build/Aloha* release/ || true
-          cp -r lib/raylib/lib/raylib.dll release/ || true
-          cp -r romfs/ release/ || true
+          mkdir release
+          if ("${{ matrix.name }}" -eq "msvc") {
+            cp build/Release/Aloha.exe release/
+          } else {
+            cp build/Aloha.exe release/
+          }
+          cp lib/raylib/raylib.dll release/
+          cp -r romfs/ release/
 
       - name: Compress release files
-        shell: msys2 {0}
-        run: zip -r Aloha-Windows-mingw64.zip release/
+        run: |
+          Compress-Archive -Path release -DestinationPath ${{ matrix.artifact_name }} -Force
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Aloha-Windows-mingw64
-          path: Aloha-Windows-mingw64.zip
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}
 
 
   # ======================

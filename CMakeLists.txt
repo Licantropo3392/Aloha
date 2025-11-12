@@ -14,7 +14,6 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/src/include)
 
 if(UNIX AND NOT APPLE)
-    message(STATUS "UNIX")
     find_package(PkgConfig REQUIRED)
 
     pkg_check_modules(LUA QUIET IMPORTED_TARGET lua5.1)
@@ -23,9 +22,6 @@ if(UNIX AND NOT APPLE)
     endif()
 
     if(LUA_FOUND)
-        message(STATUS "LUA_INCLUDE_DIRS: ${LUA_INCLUDE_DIRS}")
-        message(STATUS "LUA_LIBRARIES: ${LUA_LIBRARIES}")
-
         target_link_libraries(${PROJECT_NAME} PUBLIC PkgConfig::LUA)
     else()
         message(STATUS "Lua 5.1 not found. Compiling Lua from source as a static library.")
