@@ -29,47 +29,14 @@ if(UNIX AND NOT APPLE)
         target_link_libraries(${PROJECT_NAME} PUBLIC PkgConfig::LUA)
     else()
         message(STATUS "Lua 5.1 not found. Compiling Lua from source as a static library.")
-
-        add_library(LUA STATIC
-            ${CMAKE_SOURCE_DIR}/lib/lua/lapi.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lauxlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lbaselib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lcode.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldebug.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldblib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldo.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ldump.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lfunc.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lgc.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/linit.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/liolib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/llex.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lmathlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lmem.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/loadlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lobject.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lopcodes.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/loslib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lparser.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lstate.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lstring.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lstrlib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ltable.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ltablib.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/ltm.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lua.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lundump.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lvm.c
-            ${CMAKE_SOURCE_DIR}/lib/lua/lzio.c
-        )
-
-        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/lua/include)
-        target_link_libraries(${PROJECT_NAME} PUBLIC LUA)
-
-        message(STATUS "LUA_INCLUDE: ${CMAKE_SOURCE_DIR}/lib/lua/include")
+        set(LUA_STATIC TRUE)
     endif()
 else()
     message(STATUS "Non-UNIX system detected. Compiling Lua from source as a static library.")
+    set(LUA_STATIC TRUE)
+endif()
+
+if(LUA_STATIC)
     add_library(LUA STATIC
         ${CMAKE_SOURCE_DIR}/lib/lua/lapi.c
         ${CMAKE_SOURCE_DIR}/lib/lua/lauxlib.c
@@ -105,8 +72,6 @@ else()
 
     target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/lua/include)
     target_link_libraries(${PROJECT_NAME} PUBLIC LUA)
-
-    message(STATUS "LUA_INCLUDE: ${CMAKE_SOURCE_DIR}/lib/lua/include")
 endif()
 
 if(NINTENDO_3DS)
@@ -136,19 +101,28 @@ else()
         if(RAYLIB_FOUND)
             target_link_libraries(${PROJECT_NAME} PUBLIC PkgConfig::RAYLIB)
         else()
-            message(STATUS "Raylib not found. Please install the development package.")
-
-            target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/include)
-            target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylib.a)
+            message(STATUS "Raylib not found. Using bundled Raylib.")
+            set(RAYLIB_STATIC true)
         endif()
     else()
         message(STATUS "Non-UNIX system detected. Using bundled Raylib.")
-
-        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/include)
-        target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/raylib.dll)         
+        set(RAYLIB_STATIC true)
     endif()
 
-    if(WIN32)
+    if(RAYLIB_STATIC)
+        target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/include)
+
+        if(UNIX)
+            target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylib.a)
+        elseif(MINGW)
+            target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/libraylibdll.a)
+        elseif(MSVC)
+            target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/lib/raylib/lib/raylibdll.lib)
+        endif()
+    endif()
+    
+
+    if(MINGW)
         set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
     endif()
 endif()
