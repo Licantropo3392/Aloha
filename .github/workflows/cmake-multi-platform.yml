@@ -60,21 +60,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: msvc
-            raylib_url: https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_msvc16.zip
-            artifact_name: Aloha-Windows-MSVC.zip
-            setup_msys: false
-
-          - name: mingw
-            raylib_url: https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip
-            artifact_name: Aloha-Windows-mingw64.zip
-            setup_msys: true
+          - name: MSVC
+          - name: mingw64
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup MSYS2 (only for MinGW)
-        if: ${{ matrix.setup_msys }}
+        if: ${{ matrix.name }} == mingw64
         uses: msys2/setup-msys2@v2
         with:
           msystem: mingw64
@@ -88,10 +81,14 @@ jobs:
       - name: Prepare Raylib
         run: |
           mkdir -p lib/raylib/
-          curl -L ${{ matrix.raylib_url }} -o raylib.zip
-          Expand-Archive raylib.zip
+          if ("${{ matrix.name }}" -eq "msvc") {
+            curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_msvc16.zip -o raylib.zip
+          } else {
+            curl -L https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip -o raylib.zip
+          }
+          Expand-Archive raylib.zip -DestinationPath .
           mv raylib-*/* lib/raylib/
-          ls -R lib/raylib/
+          ls lib/raylib/
 
       - name: Configure CMake
         run: |
@@ -122,12 +119,12 @@ jobs:
 
       - name: Compress release files
         run: |
-          Compress-Archive -Path release -DestinationPath ${{ matrix.artifact_name }} -Force
+          Compress-Archive -Path release -DestinationPath Aloha-Windows-${{ matrix.name }} -Force
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}
+          name: Aloha-Windows-${{ matrix.name }}
+          path: Aloha-Windows-${{ matrix.name }}.zip
 
 
   # ======================
