@@ -91,6 +91,7 @@ jobs:
           curl -L ${{ matrix.raylib_url }} -o raylib.zip
           Expand-Archive raylib.zip
           mv raylib-*/* lib/raylib/
+          ls -R lib/raylib/
 
       - name: Configure CMake
         run: |
