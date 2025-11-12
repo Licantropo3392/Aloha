@@ -1,5 +1,7 @@
 /.vscode
+/.vs
 /build
+/out
 /example
 /3ds
 /lib/raylib
