@@ -1,14 +1,19 @@
 #pragma once
-#include <raylib.h>
 
 namespace Aloha {
+    typedef struct Color {
+        unsigned char r;
+        unsigned char g;
+        unsigned char b;
+        unsigned char a;
+    } Color;
+
     void init(int screenWidth, int screenHeight, const char* title);
     void setFPS(int fps);
     void close();
     bool shouldClose();
 
-    void beginDrawing();
-    void clearBackground(Color color);
+    void beginDrawing(Color color);
     void endDrawing();
 
     void drawRectangle(int x, int y, int width, int height, Color color);

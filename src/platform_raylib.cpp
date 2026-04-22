@@ -18,12 +18,9 @@ namespace Aloha {
         return WindowShouldClose();
     }
 
-    void beginDrawing() {
+    void beginDrawing(Color color) {
         BeginDrawing();
-    }
-
-    void clearBackground(Color color) {
-        ClearBackground(color);
+        ClearBackground({color.r, color.g, color.b, color.a});
     }
 
     void endDrawing() {
@@ -31,10 +28,10 @@ namespace Aloha {
     }
 
     void drawRectangle(int x, int y, int width, int height, Color color) {
-        DrawRectangle(x, y, width, height, color);
+        DrawRectangle(x, y, width, height, {color.r, color.g, color.b, color.a});
     }
 
     void drawCircle(int centerX, int centerY, int radius, Color color) {
-        DrawCircle(centerX, centerY, radius, color);
+        DrawCircle(centerX, centerY, radius, {color.r, color.g, color.b, color.a});
     }
 }
