@@ -21,11 +21,7 @@ namespace Aloha {
     C2D_Text GPUText;
     C2D_Text CmdBufText;
 
-    C2D_TextBuf bufFPS = C2D_TextBufNew(256);
-    C2D_TextBuf bufDeltaTime = C2D_TextBufNew(256);
-    C2D_TextBuf bufCPU = C2D_TextBufNew(256);
-    C2D_TextBuf bufGPU = C2D_TextBufNew(256);
-    C2D_TextBuf bufCmdBuf = C2D_TextBufNew(256);
+    C2D_TextBuf textBuffer = C2D_TextBufNew(256);
 
     C3D_RenderTarget *top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_RenderTarget *bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
@@ -71,11 +67,7 @@ namespace Aloha {
         oldTime = osGetTime();
         C2D_SceneBegin(bottom);
 
-        C2D_TextBufClear(bufFPS);
-        C2D_TextBufClear(bufDeltaTime);
-        C2D_TextBufClear(bufCPU);
-        C2D_TextBufClear(bufGPU);
-        C2D_TextBufClear(bufCmdBuf);
+        C2D_TextBufClear(textBuffer);
 
         FPSstring = "FPS: " + std::to_string(1 / ((float)deltaTime / 1000));
         deltaTimeString = "DELTA: " + std::to_string((float)deltaTime / 1000);
@@ -83,19 +75,19 @@ namespace Aloha {
         GPUstring = "GPU: " + std::to_string((C3D_GetDrawingTime() * 6));
         CmdBufstring = "CmdBuf: " + std::to_string((C3D_GetCmdBufUsage() * 100));
 
-        C2D_TextParse(&FPS, bufFPS, FPSstring.c_str());
+        C2D_TextParse(&FPS, textBuffer, FPSstring.c_str());
         C2D_TextOptimize(&FPS);
 
-        C2D_TextParse(&deltaTimeText, bufDeltaTime, deltaTimeString.c_str());
+        C2D_TextParse(&deltaTimeText, textBuffer, deltaTimeString.c_str());
         C2D_TextOptimize(&deltaTimeText);
 
-        C2D_TextParse(&CPUText, bufCPU, CPUstring.c_str());
+        C2D_TextParse(&CPUText, textBuffer, CPUstring.c_str());
         C2D_TextOptimize(&CPUText);
 
-        C2D_TextParse(&GPUText, bufGPU, GPUstring.c_str());
+        C2D_TextParse(&GPUText, textBuffer, GPUstring.c_str());
         C2D_TextOptimize(&GPUText);
 
-        C2D_TextParse(&CmdBufText, bufCmdBuf, CmdBufstring.c_str());
+        C2D_TextParse(&CmdBufText, textBuffer, CmdBufstring.c_str());
         C2D_TextOptimize(&CmdBufText);
 
         C2D_DrawText(&FPS, C2D_WithColor, 10, 10, 0, 1, 1, C2D_Color32(255, 255, 255, 255));
@@ -108,7 +100,11 @@ namespace Aloha {
     }
 
     void drawText(const char* text, int posX, int posY, int fontSize, Color color) {
-        
+        C2D_Text citroText;
+
+        C2D_TextParse(&citroText, textBuffer, text);
+        C2D_TextOptimize(&citroText);
+        C2D_DrawText(&citroText, C2D_WithColor, posX, posY, 0, fontSize / 10, fontSize / 10, C2D_Color32(color.r, color.g, color.b, color.a));
     }
 
     void drawRectangle(int x, int y, int width, int height, Color color) {
