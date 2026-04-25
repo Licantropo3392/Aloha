@@ -1,0 +1,35 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Build",
+            "description": "Default build using Ninja Multi-Config generator",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "generator": "Ninja Multi-Config"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "default",
+            "displayName": "Debug Build",
+            "description": "Build with debug configuration",
+            "configuration": "Debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "default",
+            "displayName": "Release Build",
+            "description": "Build with release configuration",
+            "configuration": "Release"
+        },
+        {
+            "name": "relwithdebinfo",
+            "configurePreset": "default",
+            "displayName": "RelWithDebInfo Build",
+            "description": "Build with RelWithDebInfo configuration",
+            "configuration": "RelWithDebInfo"
+        }
+    ]
+}
