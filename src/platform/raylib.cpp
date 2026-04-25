@@ -39,4 +39,28 @@ namespace Aloha {
     void drawCircle(int centerX, int centerY, int radius, Color color) {
         DrawCircle(centerX, centerY, radius, {color.r, color.g, color.b, color.a});
     }
+
+    bool isKeyPressed(KeyboardKey key) {
+        return IsKeyPressed(key);
+    }
+
+    bool isKeyDown(KeyboardKey key) {
+        return IsKeyDown(key);
+    }
+
+    KeyboardKey getKeyPressed() {
+        return static_cast<KeyboardKey>(GetKeyPressed());
+    }
+
+    bool isGamepadButtonPressed(GamepadButton key) {
+        return IsGamepadButtonPressed(0, key);
+    }
+
+    bool isGamepadButtonDown(GamepadButton key) {
+        return IsGamepadButtonDown(0, key);
+    }
+
+    GamepadButton getGamepadButtonPressed() {
+        return static_cast<GamepadButton>(GetGamepadButtonPressed());
+    }
 }
