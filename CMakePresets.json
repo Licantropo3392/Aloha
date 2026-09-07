@@ -1,0 +1,60 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
+      "name": "pc",
+      "displayName": "PC",
+      "inherits": "base"
+    },
+    {
+      "name": "wiiu",
+      "displayName": "WiiU",
+      "inherits": "base",
+      "toolchainFile": "$env{DEVKITPRO}/cmake/WiiU.cmake"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "base",
+      "hidden": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "base",
+      "hidden": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "relwithdebinfo",
+      "configurePreset": "base",
+      "hidden": true,
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "minsizerel",
+      "configurePreset": "base",
+      "hidden": true,
+      "configuration": "MinSizeRel"
+    },
+
+
+    { "name": "pc-debug", "displayName": "[PC] Debug", "configurePreset": "pc", "inherits": "debug" },
+    { "name": "pc-release", "displayName": "[PC] Release", "configurePreset": "pc","inherits": "release" },
+    { "name": "pc-relwithdebinfo", "displayName": "[PC] RelWithDebInfo", "configurePreset": "pc", "inherits": "relwithdebinfo" },
+    { "name": "pc-minsizerel", "displayName": "[PC] MinSizeRel", "configurePreset": "pc","inherits": "minsizerel" },
+
+
+    { "name": "wiiu-debug", "displayName": "[WiiU] Debug", "configurePreset": "wiiu", "inherits": "debug" },
+    { "name": "wiiu-release", "displayName": "[WiiU] Release", "configurePreset": "wiiu","inherits": "release" },
+    { "name": "wiiu-relwithdebinfo", "displayName": "[WiiU] RelWithDebInfo", "configurePreset": "wiiu", "inherits": "relwithdebinfo" },
+    { "name": "wiiu-minsizerel", "displayName": "[WiiU] MinSizeRel", "configurePreset": "wiiu","inherits": "minsizerel" }
+  ]
+}
