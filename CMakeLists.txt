@@ -83,10 +83,16 @@ target_include_directories(imgui PUBLIC
         ${imgui_SOURCE_DIR}/backends
 )
 
-target_link_libraries(imgui PUBLIC
+if(UNIX)
+    target_link_libraries(imgui PUBLIC
+            glfw
+            fontconfig
+    )
+elseif(WIN32)
+    target_link_libraries(imgui PUBLIC
         glfw
-        fontconfig
-)
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
 
@@ -138,7 +144,7 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 
     if(MINGW)
-        target_link_options(${PROJECT_NAME} PRIVATE "-static-libgcc" "-static-libstdc++" "-static")
+        target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
     endif()
 endif()
 
