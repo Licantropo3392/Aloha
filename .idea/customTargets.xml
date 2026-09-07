@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CLionExternalBuildManager">
+    <target id="e63a55bb-bb40-4756-83a0-33eba5686eeb" name="Wii U" defaultType="TOOL">
+      <configuration id="a0c567d9-d62e-485a-a123-95c771414bb7" name="Wii U">
+        <build type="TOOL">
+          <tool actionId="Tool_External Tools_Wii U" />
+        </build>
+        <clean type="TOOL">
+          <tool actionId="Tool_External Tools_Catnip Clean" />
+        </clean>
+      </configuration>
+    </target>
+  </component>
+</project>
