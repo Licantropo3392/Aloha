@@ -32,6 +32,9 @@ int main()
         {
             currentTest->OnUpdate();
             ImGuiLayer::Begin();
+
+            // ImGui::ShowDemoWindow();
+            ImGui::Begin("Settings");
             if (currentTest != testMenu && ImGui::Button("<-"))
             {
                 delete currentTest;
@@ -43,8 +46,8 @@ int main()
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            ImGui::Text("Application raw %.3f ms/frame", deltaTime * 1000);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetIO()->Framerate, imgui.GetIO()->Framerate);
+            ImGui::End();
 
             imgui.End();
         }
