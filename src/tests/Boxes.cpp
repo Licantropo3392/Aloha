@@ -113,6 +113,8 @@ namespace Tests
         m_Shader->SetUniform("texture2", 1);
 
         m_Window->SetCursorDisabled();
+        m_LastX = m_Window->GetMouseX();
+        m_LastY = m_Window->GetMouseY();
     }
 
     Boxes::~Boxes()
@@ -162,10 +164,8 @@ namespace Tests
         m_LastX = mouseX;
         m_LastY = mouseY;
 
-        m_MVP->projection = glm::perspective(glm::radians(m_Camera->Zoom), static_cast<float>(m_Window->GetWidth()) / static_cast<float>(m_Window->GetHeight()), 0.1f, 100.0f);
+        m_MVP->projection = glm::perspective(glm::radians(m_Camera->GetZoom()), static_cast<float>(m_Window->GetWidth()) / static_cast<float>(m_Window->GetHeight()), 0.1f, 100.0f);
         m_MVP->view = m_Camera->GetViewMatrix();
-
-        // VAO->Bind();
 
         for (unsigned int i = 0; i < 10; i++)
         {
