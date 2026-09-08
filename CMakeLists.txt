@@ -6,41 +6,37 @@ project(Aloha)
 include(FetchContent)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/dist" CACHE PATH "Install path" FORCE)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/dist CACHE PATH "Install path" FORCE)
 endif()
 
-if(WIN32)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/windows")
-elseif(APPLE)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/macos")
-elseif(UNIX)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/linux")
-elseif(NINTENDO_WIIU)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/wiiu")
+if(NINTENDO_WIIU)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/wiiu)
+else()
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/pc)
 endif()
 
-add_executable(${PROJECT_NAME} "${CMAKE_SOURCE_DIR}/src/main.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Shader.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Shader.h"
-        "${CMAKE_SOURCE_DIR}/src/camera.h"
-        "${CMAKE_SOURCE_DIR}/src/MVP.h"
-        "${CMAKE_SOURCE_DIR}/src/VertexBufferObject.cpp"
-        "${CMAKE_SOURCE_DIR}/src/VertexBufferObject.h"
-        "${CMAKE_SOURCE_DIR}/src/ElementBufferObject.cpp"
-        "${CMAKE_SOURCE_DIR}/src/ElementBufferObject.h"
-        "${CMAKE_SOURCE_DIR}/src/VertexArrayObject.cpp"
-        "${CMAKE_SOURCE_DIR}/src/VertexArrayObject.h"
-        "${CMAKE_SOURCE_DIR}/src/VertexBufferLayout.h"
-        "${CMAKE_SOURCE_DIR}/src/UniformBufferObject.cpp"
-        "${CMAKE_SOURCE_DIR}/src/UniformBufferObject.h"
-        "${CMAKE_SOURCE_DIR}/src/glDebug.h"
-        "${CMAKE_SOURCE_DIR}/src/Renderer.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Renderer.h"
-        "${CMAKE_SOURCE_DIR}/src/Window.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Window.h"
-        "${CMAKE_SOURCE_DIR}/third_party/stb_image/stb_image.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Texture.cpp"
-        "${CMAKE_SOURCE_DIR}/src/Texture.h"
+add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp
+        ${CMAKE_SOURCE_DIR}/src/Shader.cpp
+        ${CMAKE_SOURCE_DIR}/src/Shader.h
+        ${CMAKE_SOURCE_DIR}/src/camera.h
+        ${CMAKE_SOURCE_DIR}/src/MVP.h
+        ${CMAKE_SOURCE_DIR}/src/VertexBufferObject.cpp
+        ${CMAKE_SOURCE_DIR}/src/VertexBufferObject.h
+        ${CMAKE_SOURCE_DIR}/src/ElementBufferObject.cpp
+        ${CMAKE_SOURCE_DIR}/src/ElementBufferObject.h
+        ${CMAKE_SOURCE_DIR}/src/VertexArrayObject.cpp
+        ${CMAKE_SOURCE_DIR}/src/VertexArrayObject.h
+        ${CMAKE_SOURCE_DIR}/src/VertexBufferLayout.h
+        ${CMAKE_SOURCE_DIR}/src/UniformBufferObject.cpp
+        ${CMAKE_SOURCE_DIR}/src/UniformBufferObject.h
+        ${CMAKE_SOURCE_DIR}/src/glDebug.h
+        ${CMAKE_SOURCE_DIR}/src/Renderer.cpp
+        ${CMAKE_SOURCE_DIR}/src/Renderer.h
+        ${CMAKE_SOURCE_DIR}/src/Window.cpp
+        ${CMAKE_SOURCE_DIR}/src/Window.h
+        ${CMAKE_SOURCE_DIR}/third_party/stb_image/stb_image.cpp
+        ${CMAKE_SOURCE_DIR}/src/Texture.cpp
+        ${CMAKE_SOURCE_DIR}/src/Texture.h
         src/ImGuiLayer.cpp
         src/ImGuiLayer.h
         src/Test.h
@@ -73,7 +69,6 @@ add_library(imgui STATIC
         ${imgui_SOURCE_DIR}/imgui_tables.cpp
         ${imgui_SOURCE_DIR}/imgui_widgets.cpp
 
-        # --- AGGIUNGI I TUOI BACKEND QUI ---
         ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
         ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
@@ -106,7 +101,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Tracy::TracyClient)
 
 set(TRACY_ENABLE ON CACHE BOOL "Tracy Profiler" FORCE)
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/third_party")
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third_party)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 
@@ -126,10 +121,8 @@ if(NINTENDO_WIIU)
 else()
     target_compile_definitions(${PROJECT_NAME} PUBLIC __PC__)
 
-    target_sources(${PROJECT_NAME} PRIVATE
-            "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c"
-    )
-    target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/third_party/glad/include")
+    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/third_party/glad/include)
 
     FetchContent_Declare(
             glfw

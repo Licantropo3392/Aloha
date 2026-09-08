@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Aloha" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$PROJECT_DIR$/dist/pc" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Aloha" TARGET_NAME="Aloha" CONFIG_NAME="pc - pc-debug" RUN_TARGET_PROJECT_NAME="Aloha" RUN_TARGET_NAME="Aloha">
+    <method v="2">
+      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      <option name="CMake.Install" enabled="true" />
+    </method>
+  </configuration>
+</component>
