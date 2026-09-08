@@ -1,7 +1,7 @@
 #include "Boxes.h"
 
 #include "../Shader.h"
-#include "../camera.h"
+#include "Camera.h"
 #include "../MVP.h"
 
 #include "../Texture.h"
