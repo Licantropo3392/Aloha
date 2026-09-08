@@ -160,3 +160,15 @@ else()
             DESTINATION "."
     )
 endif()
+
+if(WIN32)
+    add_custom_target(run_install ALL
+            COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR} --config $<CONFIG>
+            DEPENDS ${PROJECT_NAME}
+    )
+
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+            VS_DEBUGGER_COMMAND ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe
+            VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
+    )
+endif()

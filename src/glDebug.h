@@ -55,7 +55,7 @@ inline void APIENTRY glDebugOutput(
     } std::cout << std::endl;
     std::cout << std::endl;
 
-    assert(type == GL_DEBUG_TYPE_PERFORMANCE);
+    // assert(type == GL_DEBUG_TYPE_PERFORMANCE);
 }
 
 
