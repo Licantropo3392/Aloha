@@ -18,7 +18,7 @@ endif()
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp
         ${CMAKE_SOURCE_DIR}/src/Shader.cpp
         ${CMAKE_SOURCE_DIR}/src/Shader.h
-        ${CMAKE_SOURCE_DIR}/src/camera.h
+        ${CMAKE_SOURCE_DIR}/src/tests/Camera.h
         ${CMAKE_SOURCE_DIR}/src/MVP.h
         ${CMAKE_SOURCE_DIR}/src/VertexBufferObject.cpp
         ${CMAKE_SOURCE_DIR}/src/VertexBufferObject.h
@@ -45,6 +45,8 @@ add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp
         src/Test.cpp
         src/tests/Boxes.cpp
         src/tests/Boxes.h
+        src/tests/Phong.cpp
+        src/tests/Phong.h
 )
 
 FetchContent_Declare(

@@ -1,5 +1,6 @@
-#include "tests/Boxes.h"
 #include "tests/ClearColor.h"
+#include "tests/Boxes.h"
+#include "tests/Phong.h"
 
 #include "Window.h"
 #include "ImGuiLayer.h"
@@ -23,6 +24,7 @@ int main()
 
     testMenu->Register<Tests::ClearColor>("Clear Color");
     testMenu->Register<Tests::Boxes>("Boxes");
+    testMenu->Register<Tests::Phong>("Phong");
 
     while (!window.ShouldClose())
     {

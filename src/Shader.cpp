@@ -7,6 +7,9 @@
 #include "glad/glad.h"
 #include "glDebug.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 Shader::Shader(const std::string& filePath)
 {
     auto [VertexSource, FragmentSource] = ParseShader(filePath);
@@ -28,6 +31,11 @@ void Shader::Unbind()
     glUseProgram(0);
 }
 
+void Shader::SetUniform(const std::string& name, const glm::vec3& vec)
+{
+    glUniform3f(GetUniformLocation(name),  glm::value_ptr(vec)[0], glm::value_ptr(vec)[1], glm::value_ptr(vec)[2]);
+}
+
 void Shader::SetUniform(const std::string& name, const int v0)
 {
     glUniform1i(GetUniformLocation(name), v0);
@@ -36,6 +44,11 @@ void Shader::SetUniform(const std::string& name, const int v0)
 void Shader::SetUniform(const std::string& name, const float v0, const float v1)
 {
     glUniform2f(GetUniformLocation(name), v0, v1);
+}
+
+void Shader::SetUniform(const std::string& name, const float v0, const float v1, const float v2)
+{
+    glUniform3f(GetUniformLocation(name), v0, v1, v2);
 }
 
 void Shader::SetUniform(const std::string& name, const float v0, const float v1, const float v2, const float v3)

@@ -5,6 +5,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <glm/glm.hpp>
+
 struct ShaderProgramSource
 {
     std::string VertexSource;
@@ -22,9 +24,12 @@ public:
 
     void Bind() const;
     static void Unbind();
-    void SetUniform(const std::string& name, int v0);
 
+    void SetUniform(const std::string& name, const glm::vec3& vec);
+
+    void SetUniform(const std::string& name, int v0);
     void SetUniform(const std::string& name, float v0, float v1);
+    void SetUniform(const std::string& name, float v0, float v1, float v2);
     void SetUniform(const std::string& name, float v0, float v1, float v2, float v3);
 
 private:

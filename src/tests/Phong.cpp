@@ -1,4 +1,4 @@
-#include "Boxes.h"
+#include "Phong.h"
 
 #include "../Shader.h"
 #include "Camera.h"
@@ -21,52 +21,52 @@ static float lastFrame = 0.0f;
 
 namespace Tests
 {
-    Boxes::Boxes(const Window* window)
+    Phong::Phong(const Window* window)
         : Test(window)
     {
         m_Window = window;
 
-        m_Shader = new Shader("assets/shaders/Boxes.shader");
+        m_Shader = new Shader("assets/shaders/Phong.shader");
         m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
         m_MVP = new MVP();
 
         constexpr float vertices[] = {
-            // Back face (z = -0.5)     // Texture coordinates
-            -0.5f, -0.5f, -0.5f,        0.0f, 0.0f,
-             0.5f, -0.5f, -0.5f,        1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,        1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,        0.0f, 1.0f,
+            // Back face (z = -0.5)     // Texture          // Normals
+            -0.5f, -0.5f, -0.5f,        0.0f, 0.0f,          0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,        1.0f, 0.0f,          0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,        1.0f, 1.0f,          0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,        0.0f, 1.0f,          0.0f,  0.0f, -1.0f,
 
             // Front face (z = 0.5)
-            -0.5f, -0.5f, 0.5f,         0.0f, 0.0f,
-             0.5f, -0.5f, 0.5f,         1.0f, 0.0f,
-             0.5f,  0.5f, 0.5f,         1.0f, 1.0f,
-            -0.5f,  0.5f, 0.5f,         0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f,         0.0f, 0.0f,          0.0f,  0.0f,  1.0f,
+             0.5f, -0.5f, 0.5f,         1.0f, 0.0f,          0.0f,  0.0f,  1.0f,
+             0.5f,  0.5f, 0.5f,         1.0f, 1.0f,          0.0f,  0.0f,  1.0f,
+            -0.5f,  0.5f, 0.5f,         0.0f, 1.0f,          0.0f,  0.0f,  1.0f,
 
             // Left face (x = -0.5)
-            -0.5f,  0.5f,  0.5f,        1.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f,        1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,        0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,        0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,        1.0f, 0.0f,         -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,        1.0f, 1.0f,         -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,        0.0f, 1.0f,         -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,        0.0f, 0.0f,         -1.0f,  0.0f,  0.0f,
 
             // Right face (x = 0.5)
-             0.5f,  0.5f,  0.5f,        1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,        1.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,        0.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,        0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,        1.0f, 0.0f,          1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,        1.0f, 1.0f,          1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,        0.0f, 1.0f,          1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,        0.0f, 0.0f,          1.0f,  0.0f,  0.0f,
 
             // Bottom face (y = -0.5)
-            -0.5f, -0.5f, -0.5f,        0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,        1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,        1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f,        0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,        0.0f, 1.0f,          0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,        1.0f, 1.0f,          0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,        1.0f, 0.0f,          0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,        0.0f, 0.0f,          0.0f, -1.0f,  0.0f,
 
             // Top face (y = 0.5)
-            -0.5f,  0.5f, -0.5f,         0.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,         1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,         1.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,         0.0f, 0.0f
+            -0.5f,  0.5f, -0.5f,         0.0f, 1.0f,         0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,         1.0f, 1.0f,         0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,         1.0f, 0.0f,         0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,         0.0f, 0.0f,         0.0f,  1.0f,  0.0f
         };
 
         constexpr unsigned int indices[36] = {
@@ -102,6 +102,7 @@ namespace Tests
 
         layout.Push<float>(3);
         layout.Push<float>(2);
+        layout.Push<float>(3);
         m_VAO->AddBuffer(*m_VBO, layout);
 
         m_Shader->Bind();
@@ -111,13 +112,14 @@ namespace Tests
 
         m_Shader->SetUniform("texture1", 0);
         m_Shader->SetUniform("texture2", 1);
+        m_Shader->SetUniform("lightPos", 0.0f, 0.0f, 1.0f);
 
         m_Window->SetCursorDisabled();
         m_LastX = m_Window->GetMouseX();
         m_LastY = m_Window->GetMouseY();
     }
 
-    Boxes::~Boxes()
+    Phong::~Phong()
     {
         delete m_Shader;
         delete m_Camera;
@@ -132,7 +134,7 @@ namespace Tests
         delete m_UBO;
     }
 
-    void Boxes::OnUpdate()
+    void Phong::OnUpdate()
     {
         Renderer::ClearColor();
 
@@ -167,7 +169,9 @@ namespace Tests
         m_MVP->projection = glm::perspective(glm::radians(m_Camera->GetZoom()), static_cast<float>(m_Window->GetWidth()) / static_cast<float>(m_Window->GetHeight()), 0.1f, 100.0f);
         m_MVP->view = m_Camera->GetViewMatrix();
 
-        for (unsigned int i = 0; i < 10; i++)
+        m_Shader->SetUniform("viewPos", m_Camera->GetPosition());
+
+        for (unsigned int i = 0; i < m_CubePositions.size(); i++)
         {
             m_MVP->model = glm::mat4(1.0f);
             m_MVP->model = glm::translate(m_MVP->model, m_CubePositions.at(i));
@@ -182,7 +186,7 @@ namespace Tests
         }
     }
 
-    void Boxes::OnImGuiRender()
+    void Phong::OnImGuiRender()
     {
         // static float f = 0.0f;
         //
