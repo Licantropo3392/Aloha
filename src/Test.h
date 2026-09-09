@@ -32,7 +32,6 @@ namespace Tests
     public:
         explicit TestMenu(const Window* window, Test*& currentTest);
 
-        void OnUpdate() override;
         void OnImGuiRender() override;
 
         template <typename T>

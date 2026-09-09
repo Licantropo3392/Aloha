@@ -1,5 +1,7 @@
 #include <imgui.h>
 
+#include <utility>
+
 #include "Renderer.h"
 #include "Window.h"
 
@@ -15,25 +17,20 @@ namespace Tests
         : Test(window), m_CurrentTest(currentTest)
     { }
 
-    void TestMenu::OnUpdate()
-    {
-        Renderer::ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    }
-
+    static const char* item_current = nullptr;
     void TestMenu::OnImGuiRender()
     {
-       /* for (auto& [name, ptr] : m_Tests)
+        if (item_current == nullptr)
         {
-            if (ImGui::Button(name.c_str()))
-                m_CurrentTest = ptr();
-        } */
+            m_CurrentTest = m_Tests[0].second();
+            item_current = m_Tests[0].first.c_str();
+        }
 
-        static const char* item_current = m_Tests[1].first.c_str();
         if (ImGui::BeginCombo("Tests", item_current))
         {
-            for (auto& [name, ptr] : m_Tests)
+            for (const auto& [name, ptr] : m_Tests)
             {
-                bool is_selected = (item_current == name.c_str());
+                const bool is_selected = (item_current == name.c_str());
                 if (ImGui::Selectable(name.c_str(), is_selected))
                 {
                     item_current = name.c_str();
@@ -41,9 +38,7 @@ namespace Tests
                 }
 
                 if (is_selected)
-                {
                     ImGui::SetItemDefaultFocus();
-                }
             }
             ImGui::EndCombo();
         }
