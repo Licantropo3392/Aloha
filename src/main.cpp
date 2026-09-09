@@ -28,26 +28,34 @@ int main()
 
     while (!window.ShouldClose())
     {
+        if (window.IsKeyPressed(GLFW_KEY_ESCAPE))
+            window.SetShouldClose(true);
+
+        ImGuiLayer::Begin();
+
         if (currentTest)
         {
             currentTest->OnUpdate();
-            ImGuiLayer::Begin();
-
-            // ImGui::ShowDemoWindow();
-            ImGui::Begin("Settings");
-            testMenu->OnImGuiRender();
-
-            const float currentFrame = Window::GetTime();
-            deltaTime = currentFrame - lastFrame;
-            lastFrame = currentFrame;
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetIO()->Framerate, imgui.GetIO()->Framerate);
-            ImGui::End();
-
             currentTest->OnImGuiRender();
-
-            imgui.End();
         }
+
+        // ImGui::ShowDemoWindow();
+        ImGui::Begin("Settings");
+        testMenu->OnImGuiRender();
+
+        const float currentFrame = Window::GetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetIO()->Framerate, imgui.GetIO()->Framerate);
+
+        if (ImGui::Button("Close"))
+        {
+            window.SetShouldClose(true);
+        }
+        ImGui::End();
+
+        imgui.End();
 
         FrameMark;
 

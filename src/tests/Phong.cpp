@@ -27,6 +27,7 @@ namespace Tests
         m_Window = window;
 
         m_Shader = new Shader("assets/shaders/Phong.shader");
+		m_ShaderLight = new Shader("assets/shaders/Light.shader");
         m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
         m_MVP = new MVP();
@@ -112,7 +113,6 @@ namespace Tests
 
         m_Shader->SetUniform("texture1", 0);
         m_Shader->SetUniform("texture2", 1);
-        m_Shader->SetUniform("lightPos", 0.0f, 0.0f, 1.0f);
 
         m_Window->SetCursorDisabled();
         m_LastX = m_Window->GetMouseX();
@@ -143,9 +143,6 @@ namespace Tests
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        if (m_Window->IsKeyPressed(GLFW_KEY_ESCAPE))
-            m_Window->SetShouldClose(true);
-
         if (m_Window->IsKeyPressed(GLFW_KEY_W))
             m_Camera->ProcessKeyboard(FORWARD, deltaTime);
         if (m_Window->IsKeyPressed(GLFW_KEY_S))
@@ -156,20 +153,31 @@ namespace Tests
             m_Camera->ProcessKeyboard(RIGHT, deltaTime);
 
         if (m_Window->IsKeyPressed(GLFW_KEY_ENTER))
+        {
             m_Window->SetCursorDisabled();
+            m_MouseDisabled = true;
+        }
         if (m_Window->IsKeyPressed(GLFW_KEY_BACKSPACE))
+        {
             m_Window->SetCursorNormal();
+            m_MouseDisabled = false;
+        }
 
         const auto mouseX = m_Window->GetMouseX();
         const auto mouseY = m_Window->GetMouseY();
-        m_Camera->ProcessMouseMovement(mouseX - m_LastX, m_LastY - mouseY);
+
+        if (m_MouseDisabled)
+            m_Camera->ProcessMouseMovement(mouseX - m_LastX, m_LastY - mouseY);
+
         m_LastX = mouseX;
         m_LastY = mouseY;
 
         m_MVP->projection = glm::perspective(glm::radians(m_Camera->GetZoom()), static_cast<float>(m_Window->GetWidth()) / static_cast<float>(m_Window->GetHeight()), 0.1f, 100.0f);
         m_MVP->view = m_Camera->GetViewMatrix();
 
+		m_Shader->Bind();
         m_Shader->SetUniform("viewPos", m_Camera->GetPosition());
+        m_Shader->SetUniform("lightPos", m_LightPos);
 
         for (unsigned int i = 0; i < m_CubePositions.size(); i++)
         {
@@ -184,16 +192,24 @@ namespace Tests
 
             Renderer::Draw(*m_Shader, *m_VAO, *m_EBO);
         }
+
+		m_ShaderLight->Bind();
+        m_MVP->model = glm::mat4(1.0f);
+        m_MVP->model = glm::translate(m_MVP->model, m_LightPos);
+
+        m_UBO->SetSubData(&m_MVP->model, sizeof(glm::mat4), 0);
+        m_UBO->SetSubData(&m_MVP->view, sizeof(glm::mat4), sizeof(glm::mat4));
+        m_UBO->SetSubData(&m_MVP->projection, sizeof(glm::mat4), sizeof(glm::mat4) * 2);
+
+        Renderer::Draw(*m_ShaderLight, *m_VAO, *m_EBO);
     }
 
     void Phong::OnImGuiRender()
     {
-        // static float f = 0.0f;
-        //
-        // ImGui::Begin("Vertex Positions");
-        //
-        // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-        //
-        // ImGui::End();
+        ImGui::Begin("Phong");
+
+		ImGui::DragFloat3("Light Position", &m_LightPos[0], 0.1f, -10.0f, 10.0f);
+
+        ImGui::End();
     }
 }

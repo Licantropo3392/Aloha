@@ -23,6 +23,7 @@ namespace Tests
     {
     private:
         Shader* m_Shader;
+        Shader* m_ShaderLight;
         Camera* m_Camera;
         MVP* m_MVP {};
 
@@ -35,8 +36,10 @@ namespace Tests
         UniformBufferObject* m_UBO;
 
         std::vector<glm::vec3> m_CubePositions;
+		glm::vec3 m_LightPos{ 0.0f, 0.0f, 1.0f };
 
         double m_LastX, m_LastY;
+		bool m_MouseDisabled = true;
 
     public:
         explicit Phong(const Window* window);

@@ -37,6 +37,7 @@ namespace Tests
         std::vector<glm::vec3> m_CubePositions;
 
         double m_LastX, m_LastY;
+        bool m_MouseDisabled = true;
 
     public:
         explicit Boxes(const Window* window);

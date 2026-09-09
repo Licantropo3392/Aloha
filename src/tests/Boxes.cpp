@@ -141,9 +141,6 @@ namespace Tests
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        if (m_Window->IsKeyPressed(GLFW_KEY_ESCAPE))
-            m_Window->SetShouldClose(true);
-
         if (m_Window->IsKeyPressed(GLFW_KEY_W))
             m_Camera->ProcessKeyboard(FORWARD, deltaTime);
         if (m_Window->IsKeyPressed(GLFW_KEY_S))
@@ -154,13 +151,22 @@ namespace Tests
             m_Camera->ProcessKeyboard(RIGHT, deltaTime);
 
         if (m_Window->IsKeyPressed(GLFW_KEY_ENTER))
+        {
             m_Window->SetCursorDisabled();
+            m_MouseDisabled = true;
+        }
         if (m_Window->IsKeyPressed(GLFW_KEY_BACKSPACE))
+        {
             m_Window->SetCursorNormal();
+            m_MouseDisabled = false;
+        }
 
         const auto mouseX = m_Window->GetMouseX();
         const auto mouseY = m_Window->GetMouseY();
-        m_Camera->ProcessMouseMovement(mouseX - m_LastX, m_LastY - mouseY);
+
+        if (m_MouseDisabled)
+            m_Camera->ProcessMouseMovement(mouseX - m_LastX, m_LastY - mouseY);
+
         m_LastX = mouseX;
         m_LastY = mouseY;
 
@@ -184,12 +190,16 @@ namespace Tests
 
     void Boxes::OnImGuiRender()
     {
-        // static float f = 0.0f;
-        //
-        // ImGui::Begin("Vertex Positions");
-        //
-        // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-        //
-        // ImGui::End();
+        ImGui::Begin("Positions");
+        
+		ImGui::Text("Camera Position: (%.2f, %.2f, %.2f)", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
+		ImGui::Separator();
+
+		for (unsigned int i = 0; i < m_CubePositions.size(); i++)
+		{
+            ImGui::BulletText("Cube %d Position: (%.2f, %.2f, %.2f)", (i + 1), m_CubePositions.at(i).x, m_CubePositions.at(i).y, m_CubePositions.at(i).z);
+		}
+
+        ImGui::End();
     }
 }
