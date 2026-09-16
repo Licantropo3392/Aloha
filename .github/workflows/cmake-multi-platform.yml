@@ -85,13 +85,24 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
 
+    - name: Stage binary for upload
+      shell: bash
+      run: |
+        mkdir -p staging
+        if [ -f "${{ steps.strings.outputs.build-output-dir }}/Aloha" ]; then
+          cp "${{ steps.strings.outputs.build-output-dir }}/Aloha" staging/
+        elif [ -f "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha.exe" ]; then
+          cp "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha.exe" staging/
+        else
+          echo "::error::Aloha binary not found"
+          exit 1
+        fi
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: Aloha-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}/Aloha
-          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha.exe
+        path: staging/
         if-no-files-found: error
 
   release:
