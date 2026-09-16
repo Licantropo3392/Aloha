@@ -115,9 +115,9 @@ jobs:
             tmpdir=$(mktemp -d)
 
             cp README.md "$tmpdir/"
-            if [ -f LICENSE ]; then
-              cp LICENSE "$tmpdir/"
-            fi
+            cp LICENSE "$tmpdir/"
+
+            cp -r assets "$tmpdir/assets"
 
             cp -r "$artifact" "$tmpdir/$name"
 
