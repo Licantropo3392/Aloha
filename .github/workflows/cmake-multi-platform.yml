@@ -88,9 +88,11 @@ jobs:
       with:
         name: Aloha-${{ matrix.os}}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
         path: |
-          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha
+          ${{ steps.strings.outputs.build-output-dir }}/Aloha
 
   release:
+    if: github.ref_type == 'tag'
+
     runs-on: ubuntu-latest
     needs: build
 
