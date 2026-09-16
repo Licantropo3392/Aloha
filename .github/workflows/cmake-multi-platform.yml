@@ -68,6 +68,8 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         --preset pc
         -S ${{ github.workspace }}
 
@@ -87,7 +89,7 @@ jobs:
       with:
         name: Aloha-${{ matrix.os}}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
         path: |
-          ${{ steps.strings.outputs.build-output-dir }}/Aloha
+          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha
 
   release:
     runs-on: ubuntu-latest
