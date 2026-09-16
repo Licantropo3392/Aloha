@@ -88,9 +88,11 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Aloha-${{ matrix.os}}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
+        name: Aloha-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
         path: |
           ${{ steps.strings.outputs.build-output-dir }}/Aloha
+          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha.exe
+        if-no-files-found: error
 
   release:
     if: github.ref_type == 'tag'
@@ -125,7 +127,6 @@ jobs:
             artifact_dir="${artifact_path%/}"
             name=$(basename "$artifact_dir")
 
-            # Skip empty artifact dirs instead of silently zipping nothing
             if [ -z "$(find "$artifact_dir" -type f -print -quit)" ]; then
               echo "::warning::Artifact '$name' is empty, skipping"
               continue
@@ -138,11 +139,11 @@ jobs:
             cp LICENSE "$tmpdir/"
             cp -r assets "$tmpdir/assets"
 
-            mkdir -p "$tmpdir/$name"
-            cp -r "$artifact_dir"/. "$tmpdir/$name/"
+            # Contenuto dell'artifact direttamente nella root dello zip
+            cp -r "$artifact_dir"/. "$tmpdir/"
 
-            # Ensure the binary is executable regardless of platform/naming
-            find "$tmpdir/$name" -maxdepth 1 -type f \( -name 'Aloha' -o -name 'Aloha.exe' \) -exec chmod +x {} \;
+            # Rendi eseguibile il binario, ovunque sia finito
+            find "$tmpdir" -maxdepth 1 -type f \( -name 'Aloha' -o -name 'Aloha.exe' \) -exec chmod +x {} \;
 
             zip_path="${GITHUB_WORKSPACE}/release/${name}.zip"
             (cd "$tmpdir" && zip -r "$zip_path" .)
