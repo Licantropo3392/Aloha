@@ -108,31 +108,62 @@ jobs:
       - name: Create release archives
         shell: bash
         run: |
+          set -euo pipefail
+
           mkdir -p release
 
-          for artifact in artifacts/*; do
-            [ -d "$artifact" ] || continue
+          shopt -s nullglob
+          artifact_dirs=(artifacts/*/)
+          shopt -u nullglob
 
-            name=$(basename "$artifact")
+          if [ ${#artifact_dirs[@]} -eq 0 ]; then
+            echo "::error::No artifact directories found under artifacts/"
+            exit 1
+          fi
+
+          for artifact_path in "${artifact_dirs[@]}"; do
+            artifact_dir="${artifact_path%/}"
+            name=$(basename "$artifact_dir")
+
+            # Skip empty artifact dirs instead of silently zipping nothing
+            if [ -z "$(find "$artifact_dir" -type f -print -quit)" ]; then
+              echo "::warning::Artifact '$name' is empty, skipping"
+              continue
+            fi
+
             tmpdir=$(mktemp -d)
+            trap 'rm -rf "$tmpdir"' EXIT
 
             cp README.md "$tmpdir/"
             cp LICENSE "$tmpdir/"
-
             cp -r assets "$tmpdir/assets"
 
-            cp -r "$artifact" "$tmpdir/$name"
+            mkdir -p "$tmpdir/$name"
+            cp -r "$artifact_dir"/. "$tmpdir/$name/"
 
-            (
-              cd "$tmpdir"
-              zip -r "${{ github.workspace }}/release/${name}.zip" .
-            )
+            # Ensure the binary is executable regardless of platform/naming
+            find "$tmpdir/$name" -maxdepth 1 -type f \( -name 'Aloha' -o -name 'Aloha.exe' \) -exec chmod +x {} \;
+
+            zip_path="${GITHUB_WORKSPACE}/release/${name}.zip"
+            (cd "$tmpdir" && zip -r "$zip_path" .)
 
             rm -rf "$tmpdir"
+            trap - EXIT
+
+            if [ ! -f "$zip_path" ]; then
+              echo "::error::Failed to create $zip_path"
+              exit 1
+            fi
           done
 
+          echo "Release archives:"
           ls -la release
           find release -maxdepth 1 -type f | sort
+
+          if [ -z "$(find release -maxdepth 1 -type f -print -quit)" ]; then
+            echo "::error::No zip files were produced in release/"
+            exit 1
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
