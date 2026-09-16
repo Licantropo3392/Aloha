@@ -46,10 +46,10 @@
     },
 
 
-    { "name": "debug", "displayName": "[PC] Debug", "configurePreset": "pc", "inherits": "base-debug" },
-    { "name": "release", "displayName": "[PC] Release", "configurePreset": "pc","inherits": "base-release" },
-    { "name": "relwithdebinfo", "displayName": "[PC] RelWithDebInfo", "configurePreset": "pc", "inherits": "base-relwithdebinfo" },
-    { "name": "minsizerel", "displayName": "[PC] MinSizeRel", "configurePreset": "pc","inherits": "base-minsizerel" },
+    { "name": "Debug", "displayName": "[PC] Debug", "configurePreset": "pc", "inherits": "base-debug" },
+    { "name": "Release", "displayName": "[PC] Release", "configurePreset": "pc","inherits": "base-release" },
+    { "name": "RelWithDebInfo", "displayName": "[PC] RelWithDebInfo", "configurePreset": "pc", "inherits": "base-relwithdebinfo" },
+    { "name": "MinSizeRel", "displayName": "[PC] MinSizeRel", "configurePreset": "pc","inherits": "base-minsizerel" },
 
 
     { "name": "wiiu-debug", "displayName": "[WiiU] Debug", "configurePreset": "wiiu", "inherits": "base-debug" },
