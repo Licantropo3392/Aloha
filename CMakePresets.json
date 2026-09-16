@@ -21,40 +21,40 @@
   ],
   "buildPresets": [
     {
-      "name": "debug",
+      "name": "base-debug",
       "configurePreset": "base",
       "hidden": true,
       "configuration": "Debug"
     },
     {
-      "name": "release",
+      "name": "base-release",
       "configurePreset": "base",
       "hidden": true,
       "configuration": "Release"
     },
     {
-      "name": "relwithdebinfo",
+      "name": "base-relwithdebinfo",
       "configurePreset": "base",
       "hidden": true,
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "minsizerel",
+      "name": "base-minsizerel",
       "configurePreset": "base",
       "hidden": true,
       "configuration": "MinSizeRel"
     },
 
 
-    { "name": "pc-debug", "displayName": "[PC] Debug", "configurePreset": "pc", "inherits": "debug" },
-    { "name": "pc-release", "displayName": "[PC] Release", "configurePreset": "pc","inherits": "release" },
-    { "name": "pc-relwithdebinfo", "displayName": "[PC] RelWithDebInfo", "configurePreset": "pc", "inherits": "relwithdebinfo" },
-    { "name": "pc-minsizerel", "displayName": "[PC] MinSizeRel", "configurePreset": "pc","inherits": "minsizerel" },
+    { "name": "debug", "displayName": "[PC] Debug", "configurePreset": "pc", "inherits": "base-debug" },
+    { "name": "release", "displayName": "[PC] Release", "configurePreset": "pc","inherits": "base-release" },
+    { "name": "relwithdebinfo", "displayName": "[PC] RelWithDebInfo", "configurePreset": "pc", "inherits": "base-relwithdebinfo" },
+    { "name": "minsizerel", "displayName": "[PC] MinSizeRel", "configurePreset": "pc","inherits": "base-minsizerel" },
 
 
-    { "name": "wiiu-debug", "displayName": "[WiiU] Debug", "configurePreset": "wiiu", "inherits": "debug" },
-    { "name": "wiiu-release", "displayName": "[WiiU] Release", "configurePreset": "wiiu","inherits": "release" },
-    { "name": "wiiu-relwithdebinfo", "displayName": "[WiiU] RelWithDebInfo", "configurePreset": "wiiu", "inherits": "relwithdebinfo" },
-    { "name": "wiiu-minsizerel", "displayName": "[WiiU] MinSizeRel", "configurePreset": "wiiu","inherits": "minsizerel" }
+    { "name": "wiiu-debug", "displayName": "[WiiU] Debug", "configurePreset": "wiiu", "inherits": "base-debug" },
+    { "name": "wiiu-release", "displayName": "[WiiU] Release", "configurePreset": "wiiu","inherits": "base-release" },
+    { "name": "wiiu-relwithdebinfo", "displayName": "[WiiU] RelWithDebInfo", "configurePreset": "wiiu", "inherits": "base-relwithdebinfo" },
+    { "name": "wiiu-minsizerel", "displayName": "[WiiU] MinSizeRel", "configurePreset": "wiiu","inherits": "base-minsizerel" }
   ]
 }
