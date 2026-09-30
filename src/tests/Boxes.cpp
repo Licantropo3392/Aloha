@@ -98,7 +98,7 @@ namespace Tests
         m_VBO = new VertexBufferObject(vertices, sizeof(vertices));
         m_EBO = new ElementBufferObject(indices, sizeof(indices) / sizeof(unsigned int));
         VertexBufferLayout layout{};
-        m_UBO = new UniformBufferObject(sizeof(*m_MVP), sizeof(glm::mat4));
+        m_UBO = new UniformBufferObject(0, sizeof(*m_MVP));
 
         layout.Push<float>(3);
         layout.Push<float>(2);

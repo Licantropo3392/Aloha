@@ -7,7 +7,7 @@ class UniformBufferObject
 private:
     unsigned int m_RendererID;
 public:
-    UniformBufferObject(unsigned int size, unsigned int rangeSize);
+    UniformBufferObject(unsigned int index, unsigned int size);
     ~UniformBufferObject();
 
     void Bind() const;
