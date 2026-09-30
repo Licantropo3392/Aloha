@@ -139,7 +139,7 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 
     if(MINGW)
-        target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
+        target_link_options(${PROJECT_NAME} PRIVATE -static)
     endif()
 endif()
 
