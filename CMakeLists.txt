@@ -38,6 +38,36 @@ endif()
 
 include(FetchContent)
 
+set(TRACY_ENABLE ON CACHE BOOL "Enable Tracy profiling" FORCE)
+FetchContent_Declare(
+    Tracy
+    EXCLUDE_FROM_ALL
+    GIT_REPOSITORY https://github.com/wolfpld/tracy.git
+    GIT_TAG v0.14.1
+)
+FetchContent_MakeAvailable(Tracy)
+
+set(TRACY_PROFILER_GENERATOR_ARGS -G "${CMAKE_GENERATOR}")
+if(CMAKE_GENERATOR_PLATFORM)
+    list(APPEND TRACY_PROFILER_GENERATOR_ARGS -A "${CMAKE_GENERATOR_PLATFORM}")
+endif()
+if(CMAKE_GENERATOR_TOOLSET)
+    list(APPEND TRACY_PROFILER_GENERATOR_ARGS -T "${CMAKE_GENERATOR_TOOLSET}")
+endif()
+
+add_custom_target(TracyProfiler
+    COMMAND ${CMAKE_COMMAND}
+        -S "${tracy_SOURCE_DIR}/profiler"
+        -B "${CMAKE_BINARY_DIR}/tracy-profiler"
+        ${TRACY_PROFILER_GENERATOR_ARGS}
+    COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/tracy-profiler"
+        --config Release
+        --target tracy-profiler
+    COMMENT "Building Tracy Profiler GUI"
+    USES_TERMINAL
+    VERBATIM
+)
+
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -62,14 +92,6 @@ FetchContent_Declare(
     GIT_TAG v1.92.9b-docking
 )
 FetchContent_MakeAvailable(imgui)
-
-set(TRACY_ENABLE ON CACHE BOOL "Tracy Profiler" FORCE)
-FetchContent_Declare(
-    Tracy
-    GIT_REPOSITORY https://github.com/wolfpld/tracy.git
-    GIT_TAG v0.14.1
-)
-FetchContent_MakeAvailable(Tracy)
 
 add_library(aloha_imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp
@@ -115,7 +137,10 @@ if(ALOHA_PLATFORM STREQUAL "PC" AND ALOHA_GRAPHICS_API STREQUAL "OPENGL")
         third_party/glad/src/glad.c
     )
     list(APPEND ALOHA_GRAPHICS_DEPENDENCIES glfw)
-    list(APPEND ALOHA_PLATFORM_INCLUDE_DIRECTORIES third_party/glad/include)
+    list(APPEND ALOHA_PLATFORM_INCLUDE_DIRECTORIES
+        third_party/glad/include
+        src/platform/pc/opengl
+    )
     target_link_libraries(aloha_imgui PUBLIC glfw)
 
     if(UNIX AND NOT APPLE)

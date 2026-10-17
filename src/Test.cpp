@@ -5,6 +5,7 @@
 #include "Window.h"
 
 #include "Test.h"
+#include <tracy/Tracy.hpp>
 
 namespace Tests
 {
@@ -19,6 +20,7 @@ namespace Tests
     static const char* item_current = nullptr;
     void TestMenu::OnImGuiRender()
     {
+        ZoneScopedN("TestMenu::OnImGuiRender");
         if (item_current == nullptr)
         {
             m_CurrentTest = m_Tests[0].second();

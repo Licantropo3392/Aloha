@@ -5,6 +5,9 @@
 
 #include "glDebug.h"
 
+#include <tracy/Tracy.hpp>
+#include <tracy/TracyOpenGL.hpp>
+
 #include "Window.h"
 
 bool debugContext;
@@ -44,6 +47,9 @@ Window::Window(int width, int height, const std::string& title)
         std::cout << "Failed to initialize GLAD" << std::endl;
         return;
     }
+
+    TracyGpuContext;
+    TracyGpuContextName("OpenGL", 6);
 
     glfwSwapInterval(1); // Enable vsync
 
@@ -93,11 +99,14 @@ void Window::SetCursorDisabled() const
 
 void Window::SwapBuffers() const
 {
+    ZoneScoped;
+    TracyGpuCollect;
     glfwSwapBuffers(m_Window);
 }
 
 void Window::PollEvents()
 {
+    ZoneScoped;
     glfwPollEvents();
 }
 

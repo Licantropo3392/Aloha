@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_GLRUN_H
-#define LEARN_OPENGL_GLRUN_H
+#pragma once
 
 #include <iostream>
 #include <ostream>
@@ -57,6 +56,3 @@ inline void APIENTRY glDebugOutput(
 
     // assert(type == GL_DEBUG_TYPE_PERFORMANCE);
 }
-
-
-#endif //LEARN_OPENGL_GLRUN_H

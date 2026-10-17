@@ -7,6 +7,7 @@
 #include "glad/glad.h"
 #include "glDebug.h"
 #include "GLObjects.h"
+#include <tracy/Tracy.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -14,6 +15,7 @@
 Shader::Shader(const std::string& filePath)
     : m_Impl(std::make_unique<Impl>())
 {
+    ZoneScopedN("Shader::Load and compile");
     auto [VertexSource, FragmentSource] = ParseShader(filePath);
     m_Impl->rendererId = CreateShader(VertexSource, FragmentSource);
 }

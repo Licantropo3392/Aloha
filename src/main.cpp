@@ -17,6 +17,9 @@ static float lastFrame = 0.0f;
 
 int main()
 {
+    tracy::SetThreadName("Main");
+    TracyMessageL("Aloha started");
+
     const Window window(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL");
     const ImGuiLayer imgui(window);
 
@@ -30,39 +33,49 @@ int main()
 
     while (!window.ShouldClose())
     {
-        if (window.IsKeyPressed(GLFW_KEY_ESCAPE))
-            window.SetShouldClose(true);
-
-        imgui.Begin();
-
-        if (currentTest)
-        {
-            currentTest->OnUpdate();
-            currentTest->OnImGuiRender();
-        }
-
-        // ImGui::ShowDemoWindow();
-        ImGui::Begin("Settings");
-        testMenu->OnImGuiRender();
-
-        const float currentFrame = Window::GetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetFramerate(), imgui.GetFramerate());
-
-        if (ImGui::Button("Close"))
-        {
-            window.SetShouldClose(true);
-        }
-        ImGui::End();
-
-        imgui.End();
-
         FrameMark;
+        {
+            ZoneScopedN("Application Frame");
 
-        window.SwapBuffers();
-        Window::PollEvents();
+            if (window.IsKeyPressed(GLFW_KEY_ESCAPE))
+                window.SetShouldClose(true);
+
+            {
+                ZoneScopedN("Update and render test");
+                if (currentTest)
+                    currentTest->OnUpdate();
+            }
+
+            {
+                ZoneScopedN("ImGui frame");
+                imgui.Begin();
+
+                if (currentTest)
+                    currentTest->OnImGuiRender();
+
+                ImGui::Begin("Settings");
+                testMenu->OnImGuiRender();
+
+                const float currentFrame = Window::GetTime();
+                deltaTime = currentFrame - lastFrame;
+                lastFrame = currentFrame;
+
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetFramerate(), imgui.GetFramerate());
+                TracyPlot("FPS", imgui.GetFramerate());
+
+                if (ImGui::Button("Close"))
+                    window.SetShouldClose(true);
+
+                ImGui::End();
+                imgui.End();
+            }
+        }
+
+        {
+            ZoneScopedN("Present frame");
+            window.SwapBuffers();
+            Window::PollEvents();
+        }
     }
 
     return 0;
