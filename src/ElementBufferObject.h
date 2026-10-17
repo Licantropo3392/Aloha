@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_ELEMENTBUFFEROBJECT_H
-#define LEARN_OPENGL_ELEMENTBUFFEROBJECT_H
+#pragma once
 
 #include <memory>
 
@@ -22,6 +21,3 @@ public:
 
     [[nodiscard]] unsigned int GetCount() const;
 };
-
-
-#endif //LEARN_OPENGL_ELEMENTBUFFEROBJECT_H

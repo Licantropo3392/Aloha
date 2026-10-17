@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_SHADER_H
-#define LEARN_OPENGL_SHADER_H
+#pragma once
 
 
 #include <memory>
@@ -12,7 +11,6 @@ struct ShaderProgramSource
     std::string VertexSource;
     std::string FragmentSource;
 };
-
 class Shader
 {
 private:
@@ -43,6 +41,3 @@ private:
     static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
     [[nodiscard]] unsigned int GetUniformLocation(const std::string& name);
 };
-
-
-#endif //LEARN_OPENGL_SHADER_H

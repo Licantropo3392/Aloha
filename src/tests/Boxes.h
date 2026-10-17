@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_BOXES_H
-#define LEARN_OPENGL_BOXES_H
+#pragma once
 
 
 #include "../Test.h"
@@ -47,5 +46,3 @@ namespace Tests
         void OnImGuiRender() override;
     };
 }
-
-#endif //LEARN_OPENGL_BOXES_H

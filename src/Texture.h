@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_TEXTURE_H
-#define LEARN_OPENGL_TEXTURE_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -27,6 +26,3 @@ public:
     [[nodiscard]] int GetHeight() const;
     [[nodiscard]] int GetBPP() const;
 };
-
-
-#endif

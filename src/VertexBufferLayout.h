@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_VERTEXBUFFERLAYOUT_H
-#define LEARN_OPENGL_VERTEXBUFFERLAYOUT_H
+#pragma once
 
 
 #include <cstddef>
@@ -26,7 +25,6 @@ struct VertexBufferElement
             case VertexAttributeType::UInt32:  return sizeof(unsigned int);
             case VertexAttributeType::UInt8:   return sizeof(unsigned char);
         }
-
         return 0;
     }
 };
@@ -75,6 +73,3 @@ inline void VertexBufferLayout::Push<unsigned char>(unsigned int count)
     m_Elements.push_back({ VertexAttributeType::UInt8, count, true });
     m_Stride += count * VertexBufferElement::GetTypeSize(VertexAttributeType::UInt8);
 }
-
-
-#endif

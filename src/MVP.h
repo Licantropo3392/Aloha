@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_VIEW_H
-#define LEARN_OPENGL_VIEW_H
+#pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,4 +10,3 @@ struct MVP
     glm::mat4 view;
     glm::mat4 projection;
 };
-#endif //LEARN_OPENGL_VIEW_H

@@ -1,5 +1,4 @@
-#ifndef ALOHA_PHONG_H
-#define ALOHA_PHONG_H
+#pragma once
 
 
 #include "../Test.h"
@@ -49,6 +48,3 @@ namespace Tests
         void OnImGuiRender() override;
     };
 }
-
-
-#endif //ALOHA_PHONG_H

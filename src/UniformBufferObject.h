@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_UNIFORMBUFFEROBJECT_H
-#define LEARN_OPENGL_UNIFORMBUFFEROBJECT_H
+#pragma once
 
 #include <memory>
 
@@ -22,6 +21,3 @@ public:
 
     void SetSubData(const void* data, unsigned int size, unsigned int offset) const;
 };
-
-
-#endif //LEARN_OPENGL_UNIFORMBUFFEROBJECT_H

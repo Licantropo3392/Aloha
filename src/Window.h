@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_WINDOW_H
-#define LEARN_OPENGL_WINDOW_H
+#pragma once
 
 
 #include <string>
@@ -43,6 +42,3 @@ public:
     [[nodiscard]] int GetHeight() const { return m_Height; }
     [[nodiscard]] GLFWwindow* GetWindow() const { return m_Window; }
 };
-
-
-#endif //LEARN_OPENGL_WINDOW_H

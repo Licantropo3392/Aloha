@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_RENDERER_H
-#define LEARN_OPENGL_RENDERER_H
+#pragma once
 
 #include <memory>
 
@@ -31,5 +30,3 @@ public:
     void ClearColor(float r, float g, float b, float a) const;
     void ClearColor(const float color[4]) const;
 };
-
-#endif //LEARN_OPENGL_RENDERER_H

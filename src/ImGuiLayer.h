@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_IMGUILAYER_H
-#define LEARN_OPENGL_IMGUILAYER_H
+#pragma once
 
 #include <memory>
 
@@ -24,5 +23,3 @@ public:
     void End() const;
     [[nodiscard]] float GetFramerate() const;
 };
-
-#endif

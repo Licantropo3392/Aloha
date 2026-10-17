@@ -85,4 +85,3 @@ static inline bool GLSL_Shutdown()
 #endif
     return true;
 }
-

@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_VERTEXARRAYOBJECT_H
-#define LEARN_OPENGL_VERTEXARRAYOBJECT_H
+#pragma once
 
 
 #include <memory>
@@ -27,6 +26,3 @@ public:
 
     void AddBuffer(const VertexBufferObject& VBO, const VertexBufferLayout& layout) const;
 };
-
-
-#endif //LEARN_OPENGL_VERTEXARRAYOBJECT_H

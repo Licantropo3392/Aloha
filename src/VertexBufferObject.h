@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_VERTEXBUFFEROBJECT_H
-#define LEARN_OPENGL_VERTEXBUFFEROBJECT_H
+#pragma once
 
 #include <memory>
 
@@ -20,6 +19,3 @@ public:
     void Bind() const;
     static void Unbind();
 };
-
-
-#endif //LEARN_OPENGL_VERTEXBUFFEROBJECT_H

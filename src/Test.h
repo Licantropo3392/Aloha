@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_TEST_H
-#define LEARN_OPENGL_TEST_H
+#pragma once
 
 
 #include <functional>
@@ -41,5 +40,3 @@ namespace Tests
         }
     };
 }
-
-#endif

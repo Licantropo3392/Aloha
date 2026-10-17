@@ -1,5 +1,4 @@
-#ifndef LEARN_OPENGL_CLAERCOLOR_H
-#define LEARN_OPENGL_CLAERCOLOR_H
+#pragma once
 
 
 #include "../Test.h"
@@ -22,5 +21,3 @@ namespace Tests
         void OnImGuiRender() override;
     };
 }
-
-#endif
