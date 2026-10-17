@@ -2,23 +2,28 @@
 
 #include "glad/glad.h"
 #include "glDebug.h"
+#include "GLObjects.h"
 
 UniformBufferObject::UniformBufferObject(const unsigned int index, const unsigned int size)
+    : m_Impl(std::make_unique<Impl>())
 {
-    glGenBuffers(1, &m_RendererID);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
+    glGenBuffers(1, &m_Impl->rendererId);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Impl->rendererId);
     glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_STATIC_DRAW);
-    glBindBufferRange(GL_UNIFORM_BUFFER, index, m_RendererID, 0, size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, index, m_Impl->rendererId, 0, size);
 }
 
 UniformBufferObject::~UniformBufferObject()
 {
-    glDeleteBuffers(1, &m_RendererID);
+    if (m_Impl)
+        glDeleteBuffers(1, &m_Impl->rendererId);
 }
+
+UniformBufferObject::UniformBufferObject(UniformBufferObject&&) noexcept = default;
 
 void UniformBufferObject::Bind() const
 {
-    glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Impl->rendererId);
 }
 
 void UniformBufferObject::Unbind()
@@ -28,14 +33,6 @@ void UniformBufferObject::Unbind()
 
 void UniformBufferObject::SetSubData(const void* data, const unsigned int size, const unsigned int offset) const
 {
-    glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Impl->rendererId);
     glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 }
-
-// void UniformBufferObject::SetData(const void* data) const
-// {
-//     glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
-//
-//     for (unsigned int i = 0; i < ; i++)
-//     glBufferSubData(GL_UNIFORM_BUFFER, 0, m_RendererID, sizeof(data));
-// }

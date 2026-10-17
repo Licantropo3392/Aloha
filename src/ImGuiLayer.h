@@ -1,28 +1,28 @@
 #ifndef LEARN_OPENGL_IMGUILAYER_H
 #define LEARN_OPENGL_IMGUILAYER_H
 
+#include <memory>
 
-#include <imgui_impl_glfw.h>
-#include "GLFW/glfw3.h"
+class Window;
 
 class ImGuiLayer
 {
 private:
-    GLFWwindow* m_Window;
-    ImGuiIO* m_IO;
+    struct Impl;
+    std::unique_ptr<Impl> m_Impl;
 
 public:
-    explicit ImGuiLayer(GLFWwindow* window);
+    explicit ImGuiLayer(const Window& window);
     ~ImGuiLayer();
 
-    static void Begin();
+    ImGuiLayer(const ImGuiLayer&) = delete;
+    ImGuiLayer& operator=(const ImGuiLayer&) = delete;
+    ImGuiLayer(ImGuiLayer&&) = delete;
+    ImGuiLayer& operator=(ImGuiLayer&&) = delete;
+
+    void Begin() const;
     void End() const;
-
-    [[nodiscard]] ImGuiIO* GetIO() const
-    {
-        return m_IO;
-    }
+    [[nodiscard]] float GetFramerate() const;
 };
-
 
 #endif

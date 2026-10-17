@@ -2,7 +2,6 @@
 
 #include <utility>
 
-#include "Renderer.h"
 #include "Window.h"
 
 #include "Test.h"

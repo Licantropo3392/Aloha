@@ -1,23 +1,26 @@
 #ifndef LEARN_OPENGL_ELEMENTBUFFEROBJECT_H
 #define LEARN_OPENGL_ELEMENTBUFFEROBJECT_H
 
+#include <memory>
 
 class ElementBufferObject
 {
 private:
-    unsigned int m_RendererID;
-    unsigned int m_Count {};
+    struct Impl;
+    std::unique_ptr<Impl> m_Impl;
 public:
     ElementBufferObject(const unsigned int* data, unsigned int count);
     ~ElementBufferObject();
 
+    ElementBufferObject(const ElementBufferObject&) = delete;
+    ElementBufferObject& operator=(const ElementBufferObject&) = delete;
+    ElementBufferObject(ElementBufferObject&&) noexcept;
+    ElementBufferObject& operator=(ElementBufferObject&&) = delete;
+
     void Bind() const;
     static void Unbind();
 
-    [[nodiscard]] unsigned int GetCount() const
-    {
-        return m_Count;
-    }
+    [[nodiscard]] unsigned int GetCount() const;
 };
 
 

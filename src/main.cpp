@@ -5,6 +5,8 @@
 #include "Window.h"
 #include "ImGuiLayer.h"
 
+#include <imgui.h>
+#include <GLFW/glfw3.h>
 #include <tracy/Tracy.hpp>
 
 static int SCR_WIDTH = 854;
@@ -16,7 +18,7 @@ static float lastFrame = 0.0f;
 int main()
 {
     const Window window(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL");
-    const ImGuiLayer imgui(window.GetWindow());
+    const ImGuiLayer imgui(window);
 
     Tests::Test* currentTest = nullptr;
     const auto testMenu = new Tests::TestMenu(&window, currentTest);
@@ -31,7 +33,7 @@ int main()
         if (window.IsKeyPressed(GLFW_KEY_ESCAPE))
             window.SetShouldClose(true);
 
-        ImGuiLayer::Begin();
+        imgui.Begin();
 
         if (currentTest)
         {
@@ -47,7 +49,7 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetIO()->Framerate, imgui.GetIO()->Framerate);
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetFramerate(), imgui.GetFramerate());
 
         if (ImGui::Button("Close"))
         {

@@ -1,6 +1,8 @@
 #ifndef LEARN_OPENGL_RENDERER_H
 #define LEARN_OPENGL_RENDERER_H
 
+#include <memory>
+
 #include <glm/vec4.hpp>
 
 #include "Shader.h"
@@ -9,12 +11,25 @@
 
 class Renderer
 {
-public:
-    static void Draw(const Shader& shader, const VertexArrayObject& VAO, const ElementBufferObject& EBO);
-    static void ClearColor(const glm::vec4& color = glm::vec4(0));
-    static void ClearColor(float r, float g, float b, float a);
-    static void ClearColor(const float color[4]);
-};
+private:
+    struct Impl;
+    std::unique_ptr<Impl> m_Impl;
 
+    Renderer();
+    ~Renderer();
+
+public:
+    [[nodiscard]] static Renderer& GetInstance();
+
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
+    Renderer(Renderer&&) = delete;
+    Renderer& operator=(Renderer&&) = delete;
+
+    void Draw(const Shader& shader, const VertexArrayObject& VAO, const ElementBufferObject& EBO) const;
+    void ClearColor(const glm::vec4& color = glm::vec4(0)) const;
+    void ClearColor(float r, float g, float b, float a) const;
+    void ClearColor(const float color[4]) const;
+};
 
 #endif //LEARN_OPENGL_RENDERER_H

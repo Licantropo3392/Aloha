@@ -1,14 +1,21 @@
 #ifndef LEARN_OPENGL_UNIFORMBUFFEROBJECT_H
 #define LEARN_OPENGL_UNIFORMBUFFEROBJECT_H
 
+#include <memory>
 
 class UniformBufferObject
 {
 private:
-    unsigned int m_RendererID;
+    struct Impl;
+    std::unique_ptr<Impl> m_Impl;
 public:
     UniformBufferObject(unsigned int index, unsigned int size);
     ~UniformBufferObject();
+
+    UniformBufferObject(const UniformBufferObject&) = delete;
+    UniformBufferObject& operator=(const UniformBufferObject&) = delete;
+    UniformBufferObject(UniformBufferObject&&) noexcept;
+    UniformBufferObject& operator=(UniformBufferObject&&) = delete;
 
     void Bind() const;
     static void Unbind();

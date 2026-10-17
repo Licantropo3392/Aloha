@@ -1,37 +1,31 @@
 #ifndef LEARN_OPENGL_TEXTURE_H
 #define LEARN_OPENGL_TEXTURE_H
+
+#include <memory>
 #include <string>
 
 
 class Texture
 {
 private:
-    unsigned int m_RendererID;
-    std::string m_FilePath;
-    unsigned char* m_Data;
-    int m_Width, m_Height, m_BPP;
+    struct Impl;
+    std::unique_ptr<Impl> m_Impl;
 
 public:
     explicit Texture(std::string  m_file_path);
     ~Texture();
 
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
+    Texture(Texture&&) noexcept;
+    Texture& operator=(Texture&&) = delete;
+
     void Bind(unsigned int slot = 0) const;
     static void Unbind() ;
 
-    [[nodiscard]] int GetWidth() const
-    {
-        return m_Width;
-    }
-
-    [[nodiscard]] int GetHeight() const
-    {
-        return m_Height;
-    }
-
-    [[nodiscard]] int GetBPP() const
-    {
-        return m_BPP;
-    }
+    [[nodiscard]] int GetWidth() const;
+    [[nodiscard]] int GetHeight() const;
+    [[nodiscard]] int GetBPP() const;
 };
 
 

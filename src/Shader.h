@@ -2,8 +2,8 @@
 #define LEARN_OPENGL_SHADER_H
 
 
+#include <memory>
 #include <string>
-#include <unordered_map>
 
 #include <glm/glm.hpp>
 
@@ -16,11 +16,16 @@ struct ShaderProgramSource
 class Shader
 {
 private:
-    unsigned int m_RendererID;
-    std::unordered_map<std::string, int> m_UniformLocationCache;
+    struct Impl;
+    std::unique_ptr<Impl> m_Impl;
 public:
     explicit Shader(const std::string& filePath);
     ~Shader();
+
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+    Shader(Shader&&) noexcept;
+    Shader& operator=(Shader&&) = delete;
 
     void Bind() const;
     static void Unbind();

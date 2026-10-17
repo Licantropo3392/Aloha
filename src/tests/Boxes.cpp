@@ -134,7 +134,7 @@ namespace Tests
 
     void Boxes::OnUpdate()
     {
-        Renderer::ClearColor();
+        Renderer::GetInstance().ClearColor();
 
         const float currentFrame = Window::GetTime();
 
@@ -184,7 +184,7 @@ namespace Tests
             m_UBO->SetSubData(&m_MVP->view, sizeof(glm::mat4), sizeof(glm::mat4));
             m_UBO->SetSubData(&m_MVP->projection, sizeof(glm::mat4), sizeof(glm::mat4) * 2);
 
-            Renderer::Draw(*m_Shader, *m_VAO, *m_EBO);
+            Renderer::GetInstance().Draw(*m_Shader, *m_VAO, *m_EBO);
         }
     }
 

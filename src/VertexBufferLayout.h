@@ -2,28 +2,29 @@
 #define LEARN_OPENGL_VERTEXBUFFERLAYOUT_H
 
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
+#include <cstddef>
 #include <vector>
+
+enum class VertexAttributeType
+{
+    Float32,
+    UInt32,
+    UInt8
+};
 
 struct VertexBufferElement
 {
-    unsigned int type;
+    VertexAttributeType type;
     unsigned int count;
-    unsigned int normalized;
+    bool normalized;
 
-    static unsigned int getTypeSize(const unsigned int type)
+    [[nodiscard]] static constexpr std::size_t GetTypeSize(const VertexAttributeType type)
     {
         switch (type)
         {
-            case GL_FLOAT:              return (unsigned int)sizeof(GLfloat);
-            case GL_UNSIGNED_INT:       return (unsigned int)sizeof(GLuint);
-            case GL_UNSIGNED_BYTE:      return (unsigned int)sizeof(GLubyte);
-            case GL_UNSIGNED_SHORT:     return (unsigned int)sizeof(GLushort);
-            case GL_BYTE:               return (unsigned int)sizeof(GLbyte);
-            case GL_SHORT:              return (unsigned int)sizeof(GLshort);
-            case GL_INT:                return (unsigned int)sizeof(GLint);
+            case VertexAttributeType::Float32: return sizeof(float);
+            case VertexAttributeType::UInt32:  return sizeof(unsigned int);
+            case VertexAttributeType::UInt8:   return sizeof(unsigned char);
         }
 
         return 0;
@@ -40,7 +41,7 @@ public:
     template <typename T>
     void Push(unsigned int count)
     {
-        static_assert(false, "VertexBufferLayout is not implemented for this type");
+        static_assert(!sizeof(T), "VertexBufferLayout is not implemented for this type");
     }
 
     [[nodiscard]] const std::vector<VertexBufferElement>* GetElements() const
@@ -57,22 +58,22 @@ public:
 template <>
 inline void VertexBufferLayout::Push<float>(unsigned int count)
 {
-    m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
-    m_Stride += count * VertexBufferElement::getTypeSize(GL_FLOAT);
+    m_Elements.push_back({ VertexAttributeType::Float32, count, false });
+    m_Stride += count * VertexBufferElement::GetTypeSize(VertexAttributeType::Float32);
 }
 
 template <>
 inline void VertexBufferLayout::Push<unsigned int>(unsigned int count)
 {
-    m_Elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
-    m_Stride += count * VertexBufferElement::getTypeSize(GL_UNSIGNED_INT);
+    m_Elements.push_back({ VertexAttributeType::UInt32, count, false });
+    m_Stride += count * VertexBufferElement::GetTypeSize(VertexAttributeType::UInt32);
 }
 
 template <>
 inline void VertexBufferLayout::Push<unsigned char>(unsigned int count)
 {
-    m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
-    m_Stride += count * VertexBufferElement::getTypeSize(GL_UNSIGNED_BYTE);
+    m_Elements.push_back({ VertexAttributeType::UInt8, count, true });
+    m_Stride += count * VertexBufferElement::GetTypeSize(VertexAttributeType::UInt8);
 }
 
 

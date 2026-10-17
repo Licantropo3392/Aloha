@@ -14,7 +14,7 @@ namespace Tests
 
     void ClearColor::OnUpdate()
     {
-        Renderer::ClearColor(m_ClearColor);
+        Renderer::GetInstance().ClearColor(m_ClearColor);
     }
 
     void ClearColor::OnImGuiRender()

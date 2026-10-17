@@ -30,7 +30,7 @@ namespace Tests
         std::vector<std::pair<std::string, std::function<Test*()>>> m_Tests;
 
     public:
-        explicit TestMenu(const Window* window, Test*& currentTest);
+        TestMenu(const Window* window, Test*& currentTest);
 
         void OnImGuiRender() override;
 

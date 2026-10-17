@@ -1,1 +1,7 @@
 # Aloha
+
+## Graphics backend structure
+
+The graphics resource declarations, vertex-layout description, and ImGui layer interface are independent of OpenGL/GLFW types. Platform/API-specific implementations live under `src/platform`; currently CMake includes only `src/platform/pc/opengl`. There is no runtime backend switch. Configure the supported target with `cmake --preset pc`; target choices are exposed as `ALOHA_PLATFORM` and `ALOHA_GRAPHICS_API`.
+
+Local configure/build presets belong in the ignored `CMakeUserPresets.json`; the file is machine-specific and is intentionally not shared. On Windows, the build stages the executable and assets into `dist/<platform>`. On Wii U, staging installs the generated RPX/WUHB files and assets to `dist/wiiu`. Visual Studio's debugger launches the staged PC executable with the staged directory as its working directory. The `wiiu` user preset selects `WIIU/GX2` (the only graphics API allowed for Wii U), but CMake rejects the target until its platform and GX2 backend sources exist. To add a backend, provide implementations of the resource interfaces in its own platform/API directory and add them to the corresponding CMake source list. Public headers should remain free of native graphics handles, while backend-specific details stay in private implementation types.

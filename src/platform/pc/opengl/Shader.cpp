@@ -6,24 +6,29 @@
 
 #include "glad/glad.h"
 #include "glDebug.h"
+#include "GLObjects.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string& filePath)
+    : m_Impl(std::make_unique<Impl>())
 {
     auto [VertexSource, FragmentSource] = ParseShader(filePath);
-    m_RendererID = CreateShader(VertexSource, FragmentSource);
+    m_Impl->rendererId = CreateShader(VertexSource, FragmentSource);
 }
 
 Shader::~Shader()
 {
-    glDeleteProgram(m_RendererID);
+    if (m_Impl)
+        glDeleteProgram(m_Impl->rendererId);
 }
+
+Shader::Shader(Shader&&) noexcept = default;
 
 void Shader::Bind() const
 {
-    glUseProgram(m_RendererID);
+    glUseProgram(m_Impl->rendererId);
 }
 
 void Shader::Unbind()
@@ -125,13 +130,13 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
 
 unsigned int Shader::GetUniformLocation(const std::string& name)
 {
-    if (m_UniformLocationCache.contains(name))
-        return m_UniformLocationCache[name];
+    if (m_Impl->uniformLocationCache.contains(name))
+        return m_Impl->uniformLocationCache[name];
 
-    const int location = glGetUniformLocation(m_RendererID, name.c_str());
+    const int location = glGetUniformLocation(m_Impl->rendererId, name.c_str());
     if (location == -1)
         std::cout << "Uniform " << name << " not found\n";
 
-    m_UniformLocationCache[name] = location;
+    m_Impl->uniformLocationCache[name] = location;
     return location;
 }
