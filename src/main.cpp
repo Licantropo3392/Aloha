@@ -7,7 +7,9 @@
 
 #include <imgui.h>
 #include <GLFW/glfw3.h>
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 
 static int SCR_WIDTH = 854;
 static int SCR_HEIGHT = 480;
@@ -17,8 +19,10 @@ static float lastFrame = 0.0f;
 
 int main()
 {
+#ifdef TRACY_ENABLE
     tracy::SetThreadName("Main");
     TracyMessageL("Aloha started");
+#endif
 
     const Window window(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL");
     const ImGuiLayer imgui(window);
@@ -33,21 +37,29 @@ int main()
 
     while (!window.ShouldClose())
     {
+#ifdef TRACY_ENABLE
         FrameMark;
+#endif
         {
+#ifdef TRACY_ENABLE
             ZoneScopedN("Application Frame");
+#endif
 
             if (window.IsKeyPressed(GLFW_KEY_ESCAPE))
                 window.SetShouldClose(true);
 
             {
+#ifdef TRACY_ENABLE
                 ZoneScopedN("Update and render test");
+#endif
                 if (currentTest)
                     currentTest->OnUpdate();
             }
 
             {
+#ifdef TRACY_ENABLE
                 ZoneScopedN("ImGui frame");
+#endif
                 imgui.Begin();
 
                 if (currentTest)
@@ -61,7 +73,9 @@ int main()
                 lastFrame = currentFrame;
 
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / imgui.GetFramerate(), imgui.GetFramerate());
+#ifdef TRACY_ENABLE
                 TracyPlot("FPS", imgui.GetFramerate());
+#endif
 
                 if (ImGui::Button("Close"))
                     window.SetShouldClose(true);
@@ -72,7 +86,9 @@ int main()
         }
 
         {
+#ifdef TRACY_ENABLE
             ZoneScopedN("Present frame");
+#endif
             window.SwapBuffers();
             Window::PollEvents();
         }

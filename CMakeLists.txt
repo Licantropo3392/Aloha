@@ -38,35 +38,38 @@ endif()
 
 include(FetchContent)
 
-set(TRACY_ENABLE ON CACHE BOOL "Enable Tracy profiling" FORCE)
-FetchContent_Declare(
-    Tracy
-    EXCLUDE_FROM_ALL
-    GIT_REPOSITORY https://github.com/wolfpld/tracy.git
-    GIT_TAG v0.14.1
-)
-FetchContent_MakeAvailable(Tracy)
+option(ALOHA_ENABLE_TRACY "Build Aloha with Tracy profiling support" ON)
+if(ALOHA_ENABLE_TRACY)
+    set(TRACY_ENABLE ON CACHE BOOL "Enable Tracy profiling" FORCE)
+    FetchContent_Declare(
+        Tracy
+        EXCLUDE_FROM_ALL
+        GIT_REPOSITORY https://github.com/wolfpld/tracy.git
+        GIT_TAG v0.14.1
+    )
+    FetchContent_MakeAvailable(Tracy)
 
-set(TRACY_PROFILER_GENERATOR_ARGS -G "${CMAKE_GENERATOR}")
-if(CMAKE_GENERATOR_PLATFORM)
-    list(APPEND TRACY_PROFILER_GENERATOR_ARGS -A "${CMAKE_GENERATOR_PLATFORM}")
-endif()
-if(CMAKE_GENERATOR_TOOLSET)
-    list(APPEND TRACY_PROFILER_GENERATOR_ARGS -T "${CMAKE_GENERATOR_TOOLSET}")
-endif()
+    set(TRACY_PROFILER_GENERATOR_ARGS -G "${CMAKE_GENERATOR}")
+    if(CMAKE_GENERATOR_PLATFORM)
+        list(APPEND TRACY_PROFILER_GENERATOR_ARGS -A "${CMAKE_GENERATOR_PLATFORM}")
+    endif()
+    if(CMAKE_GENERATOR_TOOLSET)
+        list(APPEND TRACY_PROFILER_GENERATOR_ARGS -T "${CMAKE_GENERATOR_TOOLSET}")
+    endif()
 
-add_custom_target(TracyProfiler
-    COMMAND ${CMAKE_COMMAND}
-        -S "${tracy_SOURCE_DIR}/profiler"
-        -B "${CMAKE_BINARY_DIR}/tracy-profiler"
-        ${TRACY_PROFILER_GENERATOR_ARGS}
-    COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/tracy-profiler"
-        --config Release
-        --target tracy-profiler
-    COMMENT "Building Tracy Profiler GUI"
-    USES_TERMINAL
-    VERBATIM
-)
+    add_custom_target(TracyProfiler
+        COMMAND ${CMAKE_COMMAND}
+            -S "${tracy_SOURCE_DIR}/profiler"
+            -B "${CMAKE_BINARY_DIR}/tracy-profiler"
+            ${TRACY_PROFILER_GENERATOR_ARGS}
+        COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/tracy-profiler"
+            --config Release
+            --target tracy-profiler
+        COMMENT "Building Tracy Profiler GUI"
+        USES_TERMINAL
+        VERBATIM
+    )
+endif()
 
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -167,9 +170,12 @@ target_compile_definitions(Aloha PRIVATE
 target_link_libraries(Aloha PRIVATE
     glm::glm
     aloha_imgui
-    Tracy::TracyClient
     ${ALOHA_GRAPHICS_DEPENDENCIES}
 )
+
+if(ALOHA_ENABLE_TRACY)
+    target_link_libraries(Aloha PRIVATE Tracy::TracyClient)
+endif()
 
 if(MINGW)
     target_link_options(Aloha PRIVATE -static)

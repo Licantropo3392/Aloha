@@ -6,12 +6,16 @@
 
 #include "glDebug.h"
 #include "GLObjects.h"
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 
 Texture::Texture(std::string m_file_path)
     : m_Impl(std::make_unique<Impl>())
 {
+#ifdef TRACY_ENABLE
     ZoneScopedN("Texture::Load and upload");
+#endif
     stbi_set_flip_vertically_on_load(1);
     m_Impl->filePath = std::move(m_file_path);
     unsigned char* data = stbi_load(m_Impl->filePath.c_str(), &m_Impl->width, &m_Impl->height, &m_Impl->bpp, 4);

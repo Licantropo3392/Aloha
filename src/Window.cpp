@@ -5,8 +5,10 @@
 
 #include "glDebug.h"
 
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>
+#endif
 
 #include "Window.h"
 
@@ -48,8 +50,10 @@ Window::Window(int width, int height, const std::string& title)
         return;
     }
 
+#ifdef TRACY_ENABLE
     TracyGpuContext;
     TracyGpuContextName("OpenGL", 6);
+#endif
 
     glfwSwapInterval(1); // Enable vsync
 
@@ -99,14 +103,18 @@ void Window::SetCursorDisabled() const
 
 void Window::SwapBuffers() const
 {
+#ifdef TRACY_ENABLE
     ZoneScoped;
     TracyGpuCollect;
+#endif
     glfwSwapBuffers(m_Window);
 }
 
 void Window::PollEvents()
 {
+#ifdef TRACY_ENABLE
     ZoneScoped;
+#endif
     glfwPollEvents();
 }
 

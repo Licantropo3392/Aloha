@@ -14,7 +14,9 @@
 
 #include "../Renderer.h"
 #include "../Window.h"
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 #include <imgui.h>
 
 static float deltaTime = 0.0f;
@@ -135,7 +137,9 @@ namespace Tests
 
     void Boxes::OnUpdate()
     {
+#ifdef TRACY_ENABLE
         ZoneScopedN("Boxes::OnUpdate");
+#endif
         Renderer::GetInstance().ClearColor();
 
         const float currentFrame = Window::GetTime();
@@ -192,7 +196,9 @@ namespace Tests
 
     void Boxes::OnImGuiRender()
     {
+#ifdef TRACY_ENABLE
         ZoneScopedN("Boxes::OnImGuiRender");
+#endif
         ImGui::Begin("Positions");
         
 		ImGui::Text("Camera Position: (%.2f, %.2f, %.2f)", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);

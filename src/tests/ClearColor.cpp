@@ -2,7 +2,9 @@
 
 #include "../Renderer.h"
 #include "../Window.h"
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 
 #include "ClearColor.h"
 
@@ -15,13 +17,17 @@ namespace Tests
 
     void ClearColor::OnUpdate()
     {
+#ifdef TRACY_ENABLE
         ZoneScopedN("ClearColor::OnUpdate");
+#endif
         Renderer::GetInstance().ClearColor(m_ClearColor);
     }
 
     void ClearColor::OnImGuiRender()
     {
+#ifdef TRACY_ENABLE
         ZoneScopedN("ClearColor::OnImGuiRender");
+#endif
         ImGui::ColorEdit4("Clear Color", m_ClearColor);
     }
 }

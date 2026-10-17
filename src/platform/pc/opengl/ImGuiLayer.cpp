@@ -8,8 +8,10 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
 #include <tracy/TracyOpenGL.hpp>
+#endif
 
 struct ImGuiLayer::Impl
 {
@@ -57,7 +59,9 @@ ImGuiLayer::~ImGuiLayer()
 
 void ImGuiLayer::Begin() const
 {
+#ifdef TRACY_ENABLE
     ZoneScoped;
+#endif
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -65,9 +69,13 @@ void ImGuiLayer::Begin() const
 
 void ImGuiLayer::End() const
 {
+#ifdef TRACY_ENABLE
     ZoneScopedN("ImGuiLayer::Render");
+#endif
     ImGui::Render();
+#ifdef TRACY_ENABLE
     TracyGpuZone("ImGui");
+#endif
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     if (m_Impl->io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

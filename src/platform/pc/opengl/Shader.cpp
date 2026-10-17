@@ -7,7 +7,9 @@
 #include "glad/glad.h"
 #include "glDebug.h"
 #include "GLObjects.h"
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,7 +17,9 @@
 Shader::Shader(const std::string& filePath)
     : m_Impl(std::make_unique<Impl>())
 {
+#ifdef TRACY_ENABLE
     ZoneScopedN("Shader::Load and compile");
+#endif
     auto [VertexSource, FragmentSource] = ParseShader(filePath);
     m_Impl->rendererId = CreateShader(VertexSource, FragmentSource);
 }

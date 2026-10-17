@@ -14,7 +14,9 @@
 
 #include "../Renderer.h"
 #include "../Window.h"
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 #include <imgui.h>
 
 static float deltaTime = 0.0f;
@@ -137,7 +139,9 @@ namespace Tests
 
     void Phong::OnUpdate()
     {
+#ifdef TRACY_ENABLE
         ZoneScopedN("Phong::OnUpdate");
+#endif
         Renderer::GetInstance().ClearColor();
 
         const float currentFrame = Window::GetTime();
@@ -208,7 +212,9 @@ namespace Tests
 
     void Phong::OnImGuiRender()
     {
+#ifdef TRACY_ENABLE
         ZoneScopedN("Phong::OnImGuiRender");
+#endif
         ImGui::Begin("Phong");
 
 		ImGui::DragFloat3("Light Position", &m_LightPos[0], 0.1f, -10.0f, 10.0f);
