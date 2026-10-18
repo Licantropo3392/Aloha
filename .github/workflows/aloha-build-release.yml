@@ -37,28 +37,28 @@ jobs:
             c_compiler: gcc
             cpp_compiler: g++
             generator_args: -G Ninja
-            build_type: "RelWithDebInfo"
+            build_type: "Release"
             msys2: false
           - name: linux-clang
             os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
             generator_args: -G Ninja
-            build_type: "RelWithDebInfo"
+            build_type: "Release"
             msys2: false
           - name: windows-msvc
             os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
             generator_args: -G Ninja
-            build_type: "RelWithDebInfo"
+            build_type: "Release"
             msys2: false
           - name: windows-mingw-ucrt64
             os: windows-latest
             c_compiler: gcc
             cpp_compiler: g++
             generator_args: -G Ninja
-            build_type: "RelWithDebInfo"
+            build_type: "Release"
             msys2: true
             msystem: UCRT64
 

@@ -30,6 +30,7 @@ inline void APIENTRY glDebugOutput(
         case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
         case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
         case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+        default:                              std::cout << "Source: Unknown (" << source << ")"; break;
     } std::cout << std::endl;
 
     switch (type)
@@ -43,6 +44,7 @@ inline void APIENTRY glDebugOutput(
         case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
         case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
         case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+        default:                               std::cout << "Type: Unknown (" << type << ")"; break;
     } std::cout << std::endl;
 
     switch (severity)
@@ -51,8 +53,9 @@ inline void APIENTRY glDebugOutput(
         case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
         case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
         case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+        default:                             std::cout << "Severity: unknown (" << severity << ")"; break;
     } std::cout << std::endl;
     std::cout << std::endl;
 
-    // assert(type == GL_DEBUG_TYPE_PERFORMANCE);
+    assert(type == GL_DEBUG_TYPE_PERFORMANCE);
 }
