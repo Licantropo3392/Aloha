@@ -1,21 +1,72 @@
 # Aloha
 
-## Graphics backend structure
+Aloha is a small C++20 rendering playground for experimenting with graphics
+programming. It currently runs on PC with OpenGL and provides a simple ImGui
+menu for switching between rendering examples.
 
-The graphics resource declarations, vertex-layout description, and ImGui layer interface are independent of OpenGL/GLFW types. Platform/API-specific implementations live under `src/platform`; currently CMake includes only `src/platform/pc/opengl`. There is no runtime backend switch. Configure the supported target with `cmake --preset pc`; target choices are exposed as `ALOHA_PLATFORM` and `ALOHA_GRAPHICS_API`.
+## Examples
 
-Local configure/build presets belong in the ignored `CMakeUserPresets.json`; the file is machine-specific and is intentionally not shared. On Windows, the build stages the executable and assets into `dist/<platform>`. On Wii U, staging installs the generated RPX/WUHB files and assets to `dist/wiiu`. Visual Studio's debugger launches the staged PC executable with the staged directory as its working directory. The `wiiu` user preset selects `WIIU/GX2` (the only graphics API allowed for Wii U), but CMake rejects the target until its platform and GX2 backend sources exist. To add a backend, provide implementations of the resource interfaces in its own platform/API directory and add them to the corresponding CMake source list. Public headers should remain free of native graphics handles, while backend-specific details stay in private implementation types.
+- **Clear Color** — adjust the framebuffer clear color.
+- **Boxes** — move a camera through textured cubes.
+- **Phong** — inspect textured cubes with Phong lighting and adjust the light
+  position.
+
+## Build
+
+### Requirements
+
+- CMake 3.31 or newer
+- A C++20 compiler
+- Git, for fetching CMake dependencies on the first configure
+- An OpenGL-capable graphics driver
+
+On Linux, install the development packages required by GLFW for your display
+server. For Ubuntu: `libwayland-dev`, `libxkbcommon-dev`, and `xorg-dev`.
+
+Configure and build a Debug version:
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+```
+
+The project stages the executable and runtime assets in `dist/pc`. Run Aloha
+from that directory so its relative `assets/` paths resolve correctly.
+
+The first configure fetches GLFW, GLM, Dear ImGui, and Tracy with CMake
+FetchContent, so it requires network access. Subsequent builds reuse those
+sources in the build directory.
+
+## Controls
+
+- Select an example from the **Tests** menu.
+- In **Boxes** and **Phong**, use **W/A/S/D** to move the camera.
+- Press **Enter** to capture the mouse for camera look; press **Backspace** to
+  release it.
+- Press **Escape** or use the **Close** button to exit.
+
+## Graphics backends
+
+The current buildable configuration is PC/OpenGL. Graphics resource interfaces
+are kept separate from the PC/OpenGL implementation so additional platform and
+graphics backends can be added without exposing native graphics handles in
+shared headers. Wii U/GX2 is not implemented yet.
 
 ## Profiling
 
-Tracy profiling is enabled by default on the PC target. Aloha links Tracy's client library, records named CPU zones for the frame loop, test updates, UI, resource loading, and draw submission, and records GPU zones for OpenGL clears, draws, and ImGui rendering. Configure with `-DALOHA_ENABLE_TRACY=OFF` to skip fetching/building Tracy and compile Aloha without instrumentation; the `TracyProfiler` target is only available when this option is enabled.
+PC builds enable Tracy instrumentation by default. Tracy's client is linked
+into Aloha and records CPU zones across the application and rendering examples,
+as well as OpenGL GPU zones for clears, draws, and ImGui rendering. To disable
+instrumentation, configure with:
 
-The client is not a separate executable: it is compiled into Aloha and sends profiling data while Aloha runs. Its static library is built at `build/pc/_deps/tracy-build/Debug/TracyClient.lib`; the running client is `build/pc/Debug/Aloha.exe` (also staged at `dist/pc/Aloha.exe`). Build it explicitly with `cmake --build build/pc --config Debug --target TracyClient`.
-
-The separate Tracy Profiler application is the GUI used to connect to Aloha and inspect captures. Build it with the root project's `TracyProfiler` target:
-
-```powershell
-cmake --build build/pc --config Debug --target TracyProfiler
+```sh
+cmake -S . -B build -DALOHA_ENABLE_TRACY=OFF
 ```
 
-The GUI executable is `build/pc/tracy-profiler/Release/tracy-profiler.exe`. Run Aloha and the profiler; the profiler can discover the running client or connect to it through its connection dialog. Tracy's client and profiler are build dependencies/tools, not part of Aloha's staged installation.
+The Tracy Profiler GUI is a separate application and is not built or staged by
+this project. Run it alongside Aloha to inspect live profiling data.
+
+## License
+
+Aloha is distributed under the GNU General Public License v3.0. See
+[LICENSE](LICENSE) for the full text.

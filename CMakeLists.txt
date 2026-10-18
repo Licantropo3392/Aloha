@@ -48,27 +48,6 @@ if(ALOHA_ENABLE_TRACY)
         GIT_TAG v0.14.1
     )
     FetchContent_MakeAvailable(Tracy)
-
-    set(TRACY_PROFILER_GENERATOR_ARGS -G "${CMAKE_GENERATOR}")
-    if(CMAKE_GENERATOR_PLATFORM)
-        list(APPEND TRACY_PROFILER_GENERATOR_ARGS -A "${CMAKE_GENERATOR_PLATFORM}")
-    endif()
-    if(CMAKE_GENERATOR_TOOLSET)
-        list(APPEND TRACY_PROFILER_GENERATOR_ARGS -T "${CMAKE_GENERATOR_TOOLSET}")
-    endif()
-
-    add_custom_target(TracyProfiler
-        COMMAND ${CMAKE_COMMAND}
-            -S "${tracy_SOURCE_DIR}/profiler"
-            -B "${CMAKE_BINARY_DIR}/tracy-profiler"
-            ${TRACY_PROFILER_GENERATOR_ARGS}
-        COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/tracy-profiler"
-            --config Release
-            --target tracy-profiler
-        COMMENT "Building Tracy Profiler GUI"
-        USES_TERMINAL
-        VERBATIM
-    )
 endif()
 
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
