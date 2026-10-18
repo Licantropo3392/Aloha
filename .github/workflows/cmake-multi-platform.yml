@@ -65,9 +65,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: build
-        key: aloha-build-${{ runner.os }}-${{ matrix.name }}-${{ matrix.build_type }}-${{ github.ref }}-${{ github.run_id }}
+        key: aloha-build-${{ runner.os }}-${{ matrix.name }}-${{ matrix.build_type }}-${{ github.run_id }}-${{ github.run_attempt }}
         restore-keys: |
-          aloha-build-${{ runner.os }}-${{ matrix.name }}-${{ matrix.build_type }}-${{ github.ref }}-
+          aloha-build-${{ runner.os }}-${{ matrix.name }}-${{ matrix.build_type }}-
 
     - name: Set up MSYS2 UCRT64
       if: matrix.msys2 == true
