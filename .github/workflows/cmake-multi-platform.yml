@@ -3,9 +3,14 @@
 name: CMake on multiple platforms
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -17,43 +22,65 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
-      # Set up a matrix to run the following 3 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
-      # 3. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
-      #
-      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
+      # Build with GCC/Clang on Linux and MSVC/MinGW-w64 UCRT64 on Windows.
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Release]
-        c_compiler: [gcc, clang, cl]
         include:
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
-          - os: ubuntu-latest
+          - name: linux-gcc
+            os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-          - os: ubuntu-latest
+            shell: bash
+            generator_args: ""
+            build_type: "Release"
+            msys2: false
+          - name: linux-clang
+            os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-        exclude:
-          - os: windows-latest
-            c_compiler: gcc
-          - os: windows-latest
-            c_compiler: clang
-          - os: ubuntu-latest
+            shell: bash
+            generator_args: ""
+            build_type: "Release"
+            msys2: false
+          - name: windows-msvc
+            os: windows-latest
             c_compiler: cl
+            cpp_compiler: cl
+            shell: pwsh
+            generator_args: ""
+            build_type: "Release"
+            msys2: false
+          - name: windows-mingw-ucrt64
+            os: windows-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            shell: 'msys2 {0}'
+            generator_args: -G Ninja
+            build_type: "Release"
+            msys2: true
+            msystem: UCRT64
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set reusable strings
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+    - name: Cache build directory
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: aloha-build-${{ runner.os }}-${{ matrix.name }}-${{ matrix.build_type }}-${{ github.ref }}-${{ github.run_id }}
+        restore-keys: |
+          aloha-build-${{ runner.os }}-${{ matrix.name }}-${{ matrix.build_type }}-${{ github.ref }}-
+
+    - name: Set up MSYS2 UCRT64
+      if: matrix.msys2 == true
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.msystem }}
+        update: true
+        cache: true
+        install: >-
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-ninja
 
     - name: Install dependencies (Linux only)
       if: matrix.os == 'ubuntu-latest'
@@ -65,47 +92,55 @@ jobs:
           xorg-dev
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      shell: ${{ matrix.shell }}
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake -S . -B build
+        ${{ matrix.generator_args }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
 
     - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      shell: ${{ matrix.shell }}
+      run: cmake --build build --config Release
 
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
-
-    - name: Stage binary for upload
+    - name: Stage release files
       shell: bash
       run: |
-        mkdir -p staging
-        if [ -f "${{ steps.strings.outputs.build-output-dir }}/Aloha" ]; then
-          cp "${{ steps.strings.outputs.build-output-dir }}/Aloha" staging/
-        elif [ -f "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha.exe" ]; then
-          cp "${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/Aloha.exe" staging/
-        else
-          echo "::error::Aloha binary not found"
+        set -euo pipefail
+        candidates=(
+          build/Aloha
+          build/Aloha.exe
+          build/Release/Aloha
+          build/Release/Aloha.exe
+          dist/pc/Aloha
+          dist/pc/Aloha.exe
+        )
+        binary=""
+        for candidate in "${candidates[@]}"; do
+          if [[ -f "$candidate" ]]; then
+            binary="$candidate"
+            break
+          fi
+        done
+        if [[ -z "$binary" ]]; then
+          echo "::error::Could not find Aloha executable. Checked: ${candidates[*]}"
           exit 1
         fi
+        mkdir -p staging
+        cp "$binary" staging/
+        cp -r README.md LICENSE assets staging/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Aloha-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
+        name: Aloha-${{ matrix.name }}
         path: staging/
         if-no-files-found: error
+        retention-days: 14
 
   release:
-    if: github.ref_type == 'tag'
+    if: startsWith(github.ref, 'refs/tags/')
 
     runs-on: ubuntu-latest
     needs: build
@@ -147,26 +182,36 @@ jobs:
             tmpdir=$(mktemp -d)
             trap 'rm -rf "$tmpdir"' EXIT
 
-            cp README.md "$tmpdir/"
-            cp LICENSE "$tmpdir/"
-            cp -r assets "$tmpdir/assets"
-
-            # Contenuto dell'artifact direttamente nella root dello zip
+            # Artifacts already contain the executable and matching assets.
             cp -r "$artifact_dir"/. "$tmpdir/"
 
-            # Rendi eseguibile il binario, ovunque sia finito
+            for required_file in README.md LICENSE assets/awesomeface.png; do
+              if [ ! -s "$tmpdir/$required_file" ]; then
+                echo "::error::Artifact '$name' is missing $required_file"
+                exit 1
+              fi
+            done
+
+            if [ ! -s "$tmpdir/Aloha" ] && [ ! -s "$tmpdir/Aloha.exe" ]; then
+              echo "::error::Artifact '$name' does not contain an Aloha executable"
+              exit 1
+            fi
+
             find "$tmpdir" -maxdepth 1 -type f \( -name 'Aloha' -o -name 'Aloha.exe' \) -exec chmod +x {} \;
 
             zip_path="${GITHUB_WORKSPACE}/release/${name}.zip"
             (cd "$tmpdir" && zip -r "$zip_path" .)
 
-            rm -rf "$tmpdir"
-            trap - EXIT
-
             if [ ! -f "$zip_path" ]; then
               echo "::error::Failed to create $zip_path"
               exit 1
             fi
+            unzip -tq "$zip_path"
+            unzip -Z1 "$zip_path" | grep -Fxq "README.md"
+            unzip -Z1 "$zip_path" | grep -Fxq "LICENSE"
+            unzip -Z1 "$zip_path" | grep -Fxq "assets/awesomeface.png"
+            rm -rf "$tmpdir"
+            trap - EXIT
           done
 
           echo "Release archives:"
@@ -188,4 +233,5 @@ jobs:
 
             Artifacts are packaged per platform, compiler, build type and linkage mode.
           files: release/*.zip
+          fail_on_unmatched_files: true
           prerelease: false
